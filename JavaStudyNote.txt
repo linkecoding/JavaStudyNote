@@ -1,0 +1,4553 @@
+一、配置环境变量(注:存在的变量选择添加,防止覆盖,以;隔开)
+
+<1>JAVA_HOME  ----- JDK安装路径
+
+<2>PATH --------JDK命令文件的目录(bin)
+
+<3>CLASSPATH---- 类库文件目录(lib)
+
+.(表示当前路径);lib路径
+
+二、命令行编译运行java文件(dir--获得该盘下的目录)
+
+<1>编译 ------ javac hello.java   ----- 生成hello.class
+
+<2>运行 ------java hello
+
+三、java基础(一)
+
+<1>定义常量 ------ final 
+final String LOVE="hehe";
+final float PI=3.14f;
+
+四、static用法
+
+<1>static 修饰的变量为静态变量,修饰的方法为静态方法
+
+<2>静态方法中可以直接调用同类中的静态成员,但不能调用非静态成员
+
+<3>在静态方法中通过创建类的对象来访问非静态变量
+
+<4>在普通成员方法中,则可以直接访问非静态变量和静态变量
+
+<5>静态方法中不能直接调用非静态方法,需要通过对象来访问非静态方法
+
+<6>静态初始化块
+
+---在类的声明中，可以包含多个初始化块，当创建类的实例时，就会依次执行这些代码块。如果使用 static 修饰初始化块，就称为静态初始化块
+
+---静态初始化块只在类加载时执行，且只会执行一次，同时静态初始化块只能给静态变量赋值，不能初始化普通的成员变量
+
+---程序运行时静态初始化块最先被执行，然后执行普通初始化块，最后才执行构造方法。
+
+public class HelloWorld {
+    
+    String name; // 声明变量name
+	String sex; // 声明变量sex
+	static int age;// 声明静态变量age
+    
+    // 构造方法
+	public  HelloWorld () { 
+		System.out.println("通过构造方法初始化name");
+		name = "tom";
+	}
+    
+    // 初始化块
+	{ 
+		System.out.println("通过初始化块初始化sex");
+		sex = "男";
+	}
+    
+    // 静态初始化块
+	 static   { 
+		System.out.println("通过静态初始化块初始化age");
+		age = 20;
+	}
+    
+	public void show() {
+		System.out.println("姓名：" + name + "，性别：" + sex + "，年龄：" + age);
+	}
+    
+	public static void main(String[] args) {
+        
+        // 创建对象
+		HelloWorld hello = new HelloWorld();
+		// 调用对象的show方法
+        hello.show();
+        
+	}
+}
+五、内部类
+
+1.内部类
+
+<1>内部类提供了更好的封装,可以吧内部类隐藏在外部类之内,不允许同一个包中的其它类访问该类
+
+<2>内部类的方法可以直接访问外部类的所有数据,包括私有数据
+
+<3>内部类所实现的功能使用外部类同样可以实现,只是有时使用内部类更方便
+
+//外部类HelloWorld
+public class HelloWorld {
+    
+    // 内部类Inner，类Inner在类HelloWorld的内部
+    public class Inner {
+        
+		// 内部类的方法
+		public void show() {
+			System.out.println("welcome to imooc!");
+		}
+	}
+    
+	public static void main(String[] args) {
+        
+        // 创建外部类对象
+		HelloWorld hello = new HelloWorld();
+        // 创建内部类对象
+		Inner i = hello.new Inner();
+        // 调用内部类对象的方法
+		i.show();
+	}
+}
+
+2.成员内部类
+
+<1>内部类可以使用任意的访问控制符(public、protected、private、默认)
+
+<2>内部类中的方法可以访问外部类的数据,而不受访问控制符影响
+
+<3>定义的成员内部类必须使用外部类对象来创建内部类对象--格式:内部类 对象名 = 外部类对象.new 内部类()
+
+注:经过编译会产生两个.class文件(一个为外部类.class另一个为外部类名$内部类名.class)
+
+<4>外部类不能直接使用内部类的成员和方法,可先创建内部类的对象来进行访问
+
+<5>如果内部类和外部类具有相同的成员变量或方法,内部类默认访问自己的成员变量或方法,内部类要访问外部类的成员和方法要通过this关键字
+
+//外部类HelloWorld
+public class HelloWorld{
+    
+    //外部类的私有属性name
+    private String name = "imooc";
+    
+    //外部类的成员属性
+    int age = 20;
+    
+	//成员内部类Inner
+	public class Inner {
+		String name = "爱慕课";
+        //内部类中的方法
+		public void show() { 
+			System.out.println("外部类中的name：" +  HelloWorld.this.name                );
+			System.out.println("内部类中的name：" +  name               );
+			System.out.println("外部类中的age：" +HelloWorld.this.age);
+		}
+	}
+    
+	//测试成员内部类
+	public static void main(String[] args) {
+        
+        //创建外部类的对象
+		HelloWorld o = new HelloWorld (); 
+        
+        //创建内部类的对象
+		Inner inn = o.new Inner();
+        
+        //调用内部类对象的show方法
+		inn.show();
+	}
+}
+
+3.静态内部类
+
+<1>静态内部类是 static 修饰的内部类
+
+<2>静态内部类不能直接访问外部类的非静态成员，但可以通过 new 外部类().成员的方式访问
+
+<3> 如果外部类的静态成员与内部类的成员名称相同，可通过“类名.静态成员”访问外部类的静态成员；如果外部类的静态成员与内部类的成员名称不相同，则可通过“成员名”直接调用外部类的静态成员
+
+<4> 创建静态内部类的对象时，不需要外部类的对象，可以直接创建 内部类 对象名= new 内部类()
+
+//外部类
+public class HelloWorld {
+    
+    // 外部类中的静态变量score
+    private static int score = 84;
+    
+    // 创建静态内部类
+	public     static  class SInner {
+        // 内部类中的变量score
+        int score = 91;
+        
+		public void show() {
+			System.out.println("访问外部类中的score：" +  HelloWorld.score          );
+			System.out.println("访问内部类中的score：" + score);
+		}
+	}
+
+	// 测试静态内部类
+	public static void main(String[] args) {
+		// 直接创建内部类的对象
+        SInner si = new SInner();
+        
+        // 调用show方法
+		si.show();
+	}
+}
+
+4.方法内部类
+
+<1>方法内部类就是内部类定义在外部类的方法中，方法内部类只在该方法的内部可见，即只在该方法内可以使用
+
+<2>由于方法内部类不能在外部类的方法以外的地方使用，因此方法内部类不能使用访问控制符和 static 修饰符
+
+//外部类
+public class HelloWorld {
+    
+    private String name = "爱慕课";
+    
+    // 外部类中的show方法
+    public void show() { 
+		// 定义方法内部类
+		class MInner {
+			int score = 83;
+			public int getScore() {
+				return score + 10;
+			}
+		}
+        
+		// 创建方法内部类的对象
+        MInner mi = new MInner();
+        
+        // 调用内部类的方法
+		int newScore=mi.getScore();
+        
+		System.out.println("姓名：" + name + "\n加分后的成绩：" + newScore);
+	}
+    
+	// 测试方法内部类
+	public static void main(String[] args) {
+        
+		// 创建外部类的对象
+        HelloWorld mo = new HelloWorld();
+        
+        // 调用外部类的方法
+		mo.show();
+	}
+}
+
+六、继承(extends)
+
+<1>方法重写 --- 注意修饰符等与父类要相同
+
+<2>继承的初始化顺序
+
+--先初始化父类再初始化子类
+
+--先执行初始化对象中的属性,再执行构造方法中的初始化
+
+<3>final关键字
+
+--修饰类 ---- 该类不允许被继承
+
+--修饰方法 ---该方法不嫩而过被重写
+
+--修饰属性 ----该类的属性不会进行隐式的初始化(必须自己初始化)或在构造方法中赋值(只能选其一)
+
+--修饰变量 ---常量
+
+<4>super关键字(代表父类)
+
+--调用父类属性 ---- super.父类的属性
+
+--调用父类方法 ---- super.父类的方法
+
+注:子类的构造过程当中必须调用父类的构造方法
+
+--如果子类的构造方法中没有显式调用父类的构造方法,则系统默认调用父类午餐的构造方法
+
+--如果显式调用父类的构造方法,必须放在第一行(super())
+
+--如果子类构造方法中没有显式调用父类的构造方法,而父类中又没有无参构造方法(父类中定义了有残的构造方法,系统就不会替我们自动生成无参的构造方法),则编译出错
+
+七、Object 类
+
+<1>没有用extends显示继承关系,则它继承自Object类
+
+<2>Object 类中的几个重要的方法
+
+--toString()方法 -------
+
+public String toString(){
+	return "Dog[age="+age+"]";
+}
+
+-----------------------------------
+
+--equals() 方法--------比较对象的引用是否指向同一块地址
+
+----若想比较其值,则可以右键->source->equal->生成对应的equal()方法
+
+八、抽象类
+
+<1>abstract 定义抽象类
+
+<2>abstract 定义抽象方法,只有声明,不需要实现
+
+<3>包含抽象方法的类是抽象类
+
+<4>抽象类中可以包含普通方法,也可以没有抽象方法
+
+<5>抽象类不能直接创建,可以定义引用变量
+
+<6>抽象类中定义的抽象方法在其子类中必须全部实现
+
+注:抽象方法没有方法体,以;结尾
+
+package com.imooc
+
+public abstract class Telphone{
+	public abstract void call();
+	public abstract void message();
+}
+
+
+package com.imooc
+
+public class CellPhone extends Telphone{
+	
+	public void call(){
+		System.out.println("通过键盘打电话");
+	}
+
+	public void message(){
+		System.out.println("通过键盘来发短信");
+	}
+}
+
+九、接口(interface)
+
+1.接口的概念
+
+<1>接口由全局常量和公共的抽象方法组成
+
+<2>接口定义了某一批类所遵守的规范,接口不关心类的内部数据,也不关心这些类里面方法的具体实现细节,它只规定这些类里必须提供某些方法
+
+2.接口的语法
+
+[修饰符] [abstract] interface 接口名  [extends 父接口1,父接口2……]
+{
+	零个到多个常量定义
+	零个到多个抽象方法的定义
+}
+
+注:
+--接口就是用来被继承、被实现的、修饰符一般建议为public,不能使用private和protected修饰接口
+
+--接口可以多继承,而类是单继承
+
+3.接口的定义
+
+<1>接口中的属性是常量,即使定义时不添加public static final修饰符,系统也会自动加上
+
+<2>接口中的方法只能是抽象方法,即使定义时不添加public abstract修饰符,系统也会自动加上
+
+4.使用接口
+
+<1>一个类可以实现一个或多个接口,实现接口使用implements关键字.
+
+<2>java中一个类只能继承一个父类,不够灵活,通过实现多个接口可以做补充
+
+[修饰符] class 类名 extends 父类 implements 接口1,接口2……
+
+---如果要继承父类,继承父类必须在实现接口之前
+
+----------------------------
+接口在使用过程中还经常与匿名内部类配合使用
+----------------------------
+
+5.匿名内部类
+
+<1>匿名内部类就是没有名字的内部类,多用于关注实现而不关注实现类的名称
+
+Interface  i = new Interface(){
+	public void method(){
+		System.out.println("匿名内部类实现接口");
+	}
+};
+
+IPlayGame ip1 = new IPlayGame(){
+	public void playGame(){
+		System.out.println("通过匿名内部类的方式实现接口");
+	}
+};
+
+---调用-- ip1.playGame();
+
+new IPlayGame(){
+	public void playGame(){
+		System.out.println("通过匿名内部类的方式实现接口2");
+	}
+}.playGame();
+
+十、处理异常
+
+1.try--catch--
+
+try{
+	//一些会抛出异常的方法
+}catch(Exception e){
+	//处理该一异常的代码块
+}
+
+注:可以编写多个catch块来捕获多个异常
+
+2.编写多重catch语句块的顺序
+
+<1>先小后大,先子类后父类
+
+3.try--catch--finally语句块
+
+finally语句块中放捕获异常完成后最后要执行的代码
+
+--e.printStackTrace() --- 输出异常信息 
+
+十一、抛出异常
+
+1.throws  ----- 声明将要抛出何种类型的异常(声明)
+
+public void 方法名(参数列表)  throws参数列表 {
+//调用会抛出异常的方法或者:
+throws new Exception();
+}
+
+2.throw  -----
+
+写在方法体里面,将产生的异常抛出
+
+十二、自定义异常
+
+class 自定义异常 extends 异常类型{
+	
+}
+
+class DrunkException extends Exception{
+	public DrunkException(){
+
+	}
+	public DrunkException(String message){
+		super(message);
+	}
+}
+
+十三、数组有关方法补充
+
+1.复制数组
+
+<1>copyOf()方法 --- 复制数组至指定长度
+
+Array类的copyOf()方法的语法格式
+Arrays.copyOf(dataType[] srcArray,int length)
+
+package com.weiai;
+import java.util.Arrays;
+public class CopyOf {
+	public static void main(String[] args) {
+//		定义长度为5的数组
+		String [] names = new String []{"张三","李四","王五","赵六","小白"};
+//		输出原数组
+		System.out.println("原数组内容如下");
+		for(int i = 0;i < names.length;i++){
+			System.out.print(names[i]+"\t");
+		}
+		
+//		定义一个新的数组，将原数组中的5个元素复制过来，并留3个元素的空间
+		String [] newnames = (String []) Arrays.copyOf(names, 8);
+		System.out.println();
+		System.out.println("复制后的数组");
+		for (int i = 0; i < newnames.length; i++) {
+			System.out.print(newnames[i]+"\t");
+		}
+	}
+}
+
+运行结果
+
+原数组内容如下
+张三	李四	王五	赵六	小白	
+复制后的数组
+张三	李四	王五	赵六	小白	null	null	null	
+
+
+<2>copyOfRange()方法 ---- 将指定数组的指定方法复制到一个新数组中
+
+Arrays.copyOfRange(dataType[] srcArray,int startIndex,int endIndex);
+
+注:目标数组中不包含终止索引锁对应的元素
+
+package com.weiai;
+import java.util.Arrays;
+public class copyOfRange {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		String [] names = new String[]{"11","22","33","44","55","66","77","88"};
+		System.out.println("原数组：");
+		for (int i = 0; i < names.length; i++) {
+			System.out.print(names[i]+"\t");
+		}
+		
+//		复制数组的前五个元素于newnames数组中
+		String []newnames = (String [])Arrays.copyOfRange(names, 2, 7);
+		System.out.println();
+			System.out.println("新的数组");
+		for (int i = 0; i < newnames.length; i++) {
+			
+			System.out.print(newnames[i]+"\t");
+		}
+		
+	}
+
+}
+
+运行结果
+
+原数组：
+11	22	33	44	55	66	77	88	
+新的数组
+33	44	55	66	77	
+
+<3>arraycopy()方法
+
+System.arraycopy(srcArray,int srcIndex,int destArray,int destIndex,int length)
+
+--注:目标数组必须存在,且不会被重构,相当于替换目标数组中的部分元素
+
+package com.weiai;
+public class ArrayCopy {
+	public static void main(String[] args) {
+		int [] srcArray = new int[] {1,2,3,4,5,6};
+		int [] destArray = new int[] {8,8,8,8,8,8,8,8};
+		System.arraycopy(srcArray,1,destArray,2,5);
+		for (int i = 0; i < destArray.length; i++) {
+			System.out.print(destArray[i]+"\t");
+		}
+	}
+}
+
+运行结果
+
+8	8	2	3	4	5	6	8	
+
+<4>clone()方法 ----- array_name.clone()
+
+int[] destArray = srcArray.clone();
+
+2.数组排序
+
+选择排序  冒泡排序  快速排序
+
+package com.weiai;
+
+import java.util.Arrays;
+
+public class Sort {
+	public void chooseSort(int []arr){
+		System.out.println("排序前数组如下");
+		for (int i = 0; i < arr.length; i++) {
+			System.out.print(arr[i]+"\t");
+		}
+		for (int i = 0; i < arr.length; i++) {
+			int maxIndex = i;			//假设最大数的索引为当前遍历的元素索引
+			for (int j = i+1; j < arr.length; j++) {
+				if(arr[j]>arr[maxIndex]){
+					maxIndex = j;
+				}
+			}
+			int temp = arr[i];
+			arr[i] = arr[maxIndex];
+			arr[maxIndex] = temp;
+		}
+		System.out.println("\n选择排序后的数组为");
+		for (int i = 0; i < arr.length; i++) {
+			 System.out.print(arr[i]+"\t");
+		}
+	}
+	
+	public void maoSort(int []arr){
+		System.out.println("排序前数组如下");
+		for (int i = 0; i < arr.length; i++) {
+			System.out.print(arr[i]+"\t");
+		}
+		for (int i = 1; i < arr.length; i++){
+			for (int j = 0; j < arr.length-i; j++) {
+				if(arr[j]>arr[j+1]){
+					int temp = arr[j];
+					arr[j] = arr[j+1];
+					arr[j+1] = temp;
+				}
+			}
+		}
+		System.out.println("\n冒泡排序后数组为");
+		for (int i = 0; i < arr.length; i++) {
+			System.out.print(arr[i]+"\t");
+		}
+	}
+	
+	public void arraySort(int []arr){
+		System.out.println("排序前数组如下");
+		for (int i = 0; i < arr.length; i++) {
+			System.out.print(arr[i]+"\t");
+		}
+		Arrays.sort(arr);
+		System.out.println("\n调用函数排序后");
+		for (int i = 0; i < arr.length; i++) {
+			System.out.print(arr[i]+"\t");
+		}
+	}
+}
+
+package com.weiai;
+public class Test {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		int [] arr1 = new int[]{5,3,1,9,7,4,0,8};
+		int [] arr2 = new int[]{5,3,1,9,7,4,0,8};
+		int [] arr3 = new int[]{5,3,1,9,7,4,0,8};
+		Sort sort1 = new Sort();
+		sort1.chooseSort(arr1);
+		System.out.println("\n--------------------------------------");
+		sort1.maoSort(arr2);
+		System.out.println("\n--------------------------------------");
+		sort1.arraySort(arr3);
+	}
+
+}
+
+3.搜索数组
+
+<1>Arrays 类的binarySearch()方法专门用来实现二分法搜索指定数组,该方法返回搜索元素的索引值,并提供多种重载形式
+
+<2>返回第一个符合条件的元素索引
+
+<3>使用Arrays.binarySearch之前,必须对数组进行升序排列
+Arrays.binarySearch(dataType[] array_name,dataType key)
+
+十四、字符串
+
+1.创建字符串对象
+
+<1>直接用""初始化一个字符串对象
+
+---------------------使用new和String类的构造方法创建字符串帝乡-----------------
+
+<2>public String() ------ 表示一个空字符序列
+
+<3>public String(char []value)  ----- 复制字符数组value将其变成字符串
+
+char []a = {'H','e','l','l','o'};
+String sChar = new String(a);
+a[1] = 's'; ---- 不会影响已经生成的字符串
+
+<4>public String(char []value,int offset,int count) ---- 将自妇产value中索引从offset开始截取count个变成字符串
+
+<5>public String(String original) ------ 产生一个元字符串的副本
+
+2.字符串中的常用方法
+
+<1>length()  ------ 字符串长度
+
+<2>字符串比较
+
+-----equals(Object anObject) ----- 将此字符串与指定的对象比较
+
+----equalsIgnoreCase(String anotherStr) --- 将此字符串与指定字符串比较，忽略大小写
+
+----compareTo(String anotherStr) ---- 按字典顺序比较两个字符串
+
+----startsWith(String prefix) ------ 判断此字符串是否以指定的前缀开始
+
+----endWith(String prefix) ------ 判断此字符串是否以指定的后缀结束
+
+<3>搜索字符串
+
+indexOf(int ch)  indexOf(String str) ----- 返回此字符在字符串中第一次出现时的索引
+
+lastIndexOf(int ch)  lastIndexOf(String str) ---- 同上(注：ch -- 指字符对应的Unicode数值('A'))
+
+<4>提取字符串
+
+----charAt(int index) ------ 返回指定索引值出的插入值
+
+----substring(int beginIndex) ------ 提取索引从beginIndex开始的字符串部分
+
+----substring(int begin,int end) ---- 提取begin到engine之间的字符串
+
+----trim() ---- 返回删除了前导空格和后续空格的字符串
+
+<5>连接字符串 concat(String str) ---- 连接此字符串到一个字符串后面
+
+<6>替换字符串replace(String olChar,String newChar) --- 用新字符串替换所有的旧字符串
+
+<7>字符串分隔split(String regex) ----- 根据给定的正则表达式匹配拆分此字符串(返回数组)
+
+<8>字符串大小写转换 --- toUpCase()   toLowerCase()
+
+3.类StringBuffer字符串
+
+<1>StringBuffer类的构造方法
+
+--public StringBuffer()  ----- 构造一个空的字符串缓冲区,而且初始化为16个字符容量
+
+--public StringBuffer(int length)  ----- 创建一个空的字符串缓冲区,而且初始换为指定长度length的容量
+
+--public StringBuffer(String str) ----创建一个空的字符串缓冲区,并且将其内容初始化为指定的自付出啊内容str,字符串缓冲区的内容为16加上字符串str的长度
+
+注：capacity()方法可以获取字符串缓冲区的大小
+
+<2>StringBuffer类的常用方法
+
+--length() ---- 长度
+
+--toString() ---- 转换为String形式
+
+--replace(int start,int end,String str) ---- 使用参数指定的字符串替换该序列中指定范围内的内容
+
+--追加
+
+----setChar(int index,char ch) ----- 用指定字符替换giant序列中指定索引位置的字符
+
+----append(Object obj) ----- 想该序列追加所指定的对象的字符串形式
+
+----append(StingBuffer sb)  ----- 向该序列中追加参数所指定的序列
+
+--删除
+
+----deleteCharAt(int index) ------ 从该序列中删除指定索引处的字符
+
+----delete(int start,int end) ----- 从序列中删除子序列
+
+--插入 
+---- insert(int offset,Object obj) ----- 该序列的指定索引处插入指定对象的字符串形式
+
+---- insert(int offset,String str)  ----- 向指定索引处插入字符串
+
+--排序 ---- reverse() ---- 反序
+
+--容量 ---- capacity() ----- 返回StringBuffer对象当前的容量
+
+十五、正则表达式
+
+<1> . ----- 任意一个字符(除\n以外)
+
+<2>\d ----- 任意一个0-9数字
+
+<3>\D ----- 非数字
+
+<4>\s ----- 空格
+
+<5>\S ----- 非空格
+
+<6>\w ----- 数字、字母、下划线
+
+<7>\W ----- 相反
+
+<8>\p{Lower} ------ 任意一个小写字母
+
+<9>\p{Upper} ------ 任意一个大写字母
+
+<10>\p{Alpha} ------ 字母
+
+<11>\p{Alnum} ------ 数字或字母
+
+<12>\p{Punct} ------ 标点符号
+
+<13>^ ----- 匹配开始位置  $ ---- 匹配结束位置
+
+<14>{n} ---- 出现正好n次
+
+<15>{n,m} ---- 出现n到m次
+
+<16>{n,} ----- n次以上
+
+<17>? ----- 前面的字符出现0或1次
+
+<18>* ----- 前面字符出现0次或多次
+
+<19>+ ----- 前面的字符出现1或多次
+
+<20>\ ----  用来转移特殊字符
+
+<21>[] ---- 匹配出现在括号中的任意一个字符
+
+<22>[] ----  对[]中的内容取反
+
+<23>| ----- 或
+
+<24> - -----表示范围[0-9]
+
+注:String类中的matches()方法,用于判断某一字符串是否匹配某一正则表达式
+
+十六、java中的常用类
+
+1.自动装箱与拆箱
+
+----一般数据类型与对象间的转换
+
+2.基本类型--->字符串的转换
+
+
+<1>使用包装类的toString()方法
+
+<2>使用String类的valueOf()方法
+
+<3>""+基本数据类型  --->对应的字符串
+
+例:int c = 10;
+
+String str1 = Integer.toString(c);
+
+String str2 = String.valueOf(c);
+
+String str3 = ""+c;
+
+3.字符串---->基本类型的转换
+
+<1>调用包装类的parseXxx静态方法
+
+<2>调用包装类的valueOf()方法
+
+String str = "8";
+
+int d = Integer.parseInt(str);
+
+int e = Integer.valueOf(str);
+
+--补充------
+
+<1>Integer类的常量 
+-- MAX_VALUE ----  int型的最大值
+
+-- MIN_VALUE ---- int型的最小值
+
+-- SIZE ------ 用来以二进制补码形式表示int值得比特位数
+
+-- TYPE ----- 表示基本类型int的Class实例
+
+<2>Float类的常量
+
+--同上
+
+-- MAX_EXPONENT ----- 有限float变量可能具有的最大指数
+
+-- MIN-EXPONENT ----- 标准化的float变量可能具有的最小指数
+
+-- MIN-NORMAL ----- 保存float类型数值的最小标准值的常量
+
+-- NAN ---- 保存float类型的非数字值的常量
+
+<3>Double 类的常量
+
+-- 同上
+
+-- NEGATIVE_INFINITY ----- 保持double类型的负无穷大的常量
+
+-- POSITIVE_INFINITY ----- 保持double类型的正无穷大的常量
+4.Date类和SimpleDateFormate()类
+
+<1>使用Date类的无参构造方法创建的对象就代表当前时间
+
+<2>SimpleDateFormat()类中的format()方法将日期转化为指定格式的文本
+
+//创建Date()对象,表示当前时间
+Date d = new Date();
+
+//创建SimpleDateFormat对象,指定目标格式
+SimpleDateFormat  sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+//调用formate()方法格式化时间
+String today = sdf.format(d);
+System.out.println(today);
+
+<3>使用parse()方法将文本转化为日期
+
+String today = "2015年08月28日 16:37:59";
+
+SimpleDateFormat sd = new SimpleDateFormate("yyyy年MM月dd日 HH:mm:ss");
+
+Date date = sd.parse(today);
+
+System.out.println(date);
+
+5.Calendar类(抽象类)
+
+<1>推荐使用Calendar类进行时间日期的处理
+
+<2>通过getinstance()静态方法获取一个Calendar对象
+
+例:Calendar c = Calendar.getInstance();           //创建Calendar对象
+
+int year = c.get(Calendar.YEAR);
+
+int month = c.get(Calendar.MONTH)+1;			//0表示1月份
+
+int day = c.get(Calendar.DAY_OF_MONTH);
+
+int hour = c.get(Calendar.HOUR_OF_DAY);
+
+int minute = c.get(Calendar.MINUTE);
+
+int second = c.get(Calendar.SECOND);
+
+
+<3>getTime方法用于获取Date()对象,完成Calendar和Date的转换
+
+<4>getTimeInMillis()方法获取此Calendar的时间值,以毫秒为单位
+
+Date date = c.getTime();		//将Calendar对象转换为Date对象
+
+long time = c.getTimeInmillis();
+
+十七、java中的常用工具类以及对应的常用方法
+
+1.Object类
+
+<1>Object clone() ----- 创建与该对象的类相同的新对象
+
+<2>boolean equals(Object) ----- 比较亮对象是否相同
+
+<3>void finalize() ----- 拦击回收期调用该方法
+
+<4>Class getClass() ----- 返回一个对象的运行时间类(返回对象所属的类)
+
+<5>int hasCode() ----- 返回该对象的散列码值
+
+<6>void notify() ----- 激活等待在该对象监视器上的一个线程
+
+<7>void notifyAll() ----- 激活等待在该对象的监视器上的全部线程
+
+<8>String toString() ----- 返回该对象的字符串表示
+
+<9>void wait() ----- 在其他线程调用此对象的notify()方法或notify()方法前,导致当前线程等待
+ 
+2.系统类System
+
+---------成员变量(静态)-------
+
+<1>PrintStream out ------ 标准输出流
+
+此流已打开并准备接收输出数据.通常，此流UI英语的显示器输出或者由主机环境或用户指定的另一个输出目标
+
+System.out.println(data);   ---- println方法是属于流类PrintStream的方法,不是System中的方法
+
+<2>InputStream in  ------ 标准输入流
+
+此流已打开并准备提供输入数据。通常此流对应于键盘输入或者由主机环境或用户指定的另一个输入流
+
+<3>PrintStream err ------ 标准的错误输出流
+
+------------成员方法---------------
+
+<1>arraycopy() ----- 数组复制
+
+public static void arraycopy(Object src,int srcPos,Object dest,int destPos,int length)
+
+<2>currentTimeMillis() ----- 返回(long类型的数据)当前的计算机时间,时间格式为当前计算机时间与GMT时间所查的毫秒数
+
+<3>exit() ----- 终止当前正在执行的java虚拟机
+
+public static void exit(int status)
+
+--注:status-- 0 ---正常退出 ----非0 --- 异常退出
+
+<4>gc()方法 ---- 请求系统进行垃圾回收
+
+public static void gc();
+
+<5>getProperty() ---- 获得系统中属性名为key的属性对应的值
+
+public static String getProperty(String key)
+
+---注:系统中常见的属性
+java.version ---- java运行时环境版本
+
+java.home ---- java安装目录
+
+os.name --- 操作系统的名称
+
+os.version ---- 操作系统的版本
+
+user.name ----- 用户的账户名称
+
+user.home ----- 用户的主目录 
+
+user.dir ------ 用户的当前工作目录
+
+String = javaversion = System.getProperty("java.version");
+
+3.Random类
+
+---------构造方法---------
+
+<1>public Random()			------  以当前时间为种子
+
+<2>public Random(long seed)    ------  指定随机数种子
+
+---------Random类中的方法----------
+
+public boolean nextBoolean() ------- 生成随机的布尔值
+
+public double  nextDouble()
+
+public int nextInt(int n)      ------- [0,n)之间的随机数
+
+public void setSeed(long seed)  ------- 重新设置Random对象中的种子数
+
+十八、输入输出流
+
+1.字节流
+
+<1>字节输入流  InputStream类及其子类的对象表示一个字节输入流,使用类中的方法可以从流中读取一个或一批字符
+
+----InputStream类中的方法
+
+int read()     ------- 从输入流中读取一个8位的字节,并把它转换为0-255之间的整数,最后返回整数,若返回-1,则表示已经到了输入流的末尾,为了提高IO操作的效率,建议使用read()方法的另外两种形式
+
+int read(byte[] b) -------- 从输入流中读取若干个字节,并把它们保存到参数b指定的字节数组中,返回读取的字节数,如果返回-1说明已经到了文件末尾
+
+int read(byte[] b,int off,int len) ----- off指定开始位置
+
+void close() -------- 关闭输入流,释放有关资源
+
+int available()  ------ 返回可以从输入流中读取的字符串
+
+long  skip(long n)  ---- 从参数中跳过参数n指定数目的字节数
+
+void mark(int readLimit) ------ 在输入流的当前位置开始设置标志,readLimit指定最多被设置标志的字节数
+
+boolean markSupported() --------- 判断当前输入流是否允许设置标志
+
+void reset() ------ 将输入流的指针返回到设置标记的起始处
+
+-----InputStream类的子类
+
+<1>ByteArrayInputStream ------ 将字节数组转化为字节输入流,从中读取字节
+
+<2>FileInputStream类  ------- 从文件中读取数据
+
+<3>PipedInputStream类 ------ 连接到一个PipedOutputStream(管道输出流)
+
+<4>SequenceInputStream类 ------ 将多个字节输入流串联成一个字节输入流
+
+<5>ObectInputStream类 ------ 将对象反序列化
+
+---------------------------------------------------------------
+
+<2>字节输出流OutputStream
+
+-----OutputStream类中的方法
+
+void write(int b) --------- 想输出流写入一个字节,这里的参数是int类型的,但是它允许使用表达式,而不是强制转换为byte类型,为了塔高IO操作的效率,建议尽量使用write()的另外两种形式
+
+void write(byte[] b) -------- 把参数b指定的字节数组中的所有字节写入到输出流中
+
+void write(byte[] b,int off,int len)
+
+void close()  ------ 关闭输出流
+
+void flush() ------- 为了提高效率,在向输出流中写入数据时,数据一般是先保存到内存缓冲区,在内存缓冲区中的数据达到一定程度时,数据才会被写入输出流中,flush()可以强制将数据写入缓冲区中,并清空缓冲区
+
+-------OutputStream类的子类
+
+<1>ByteArrayOutputStream类----------- 向内存缓冲区中的字节数组中写数据
+
+<2>FileOutputStream类 ----- 向文件中写数据
+
+<3>PipedOutputStream类 ----- 连接到一个管道输入流(PipedInputStream)
+
+<4>ObjectOutputStream类 ------ 将对象序列化
+
+------------------------------------------------------------
+
+2.字节数组输入流(ByteArrayinputStream)
+
+<1>构造方法
+
+----ByteArrayInputStream(byte[] buf) ------ 创建以恶字节数组输入流,字节数组类型的数据源由参数不指定
+
+----ByteArrayInputStream(byte[] buf,int off,int length)
+
+package com.weiai;
+import java.io.ByteArrayInputStream;
+public class ByteArrayInDemo {
+
+	public static void main(String[] args) {
+		byte[] b = new byte[]{1,22,-22,23};
+		ByteArrayInputStream bas = new ByteArrayInputStream(b,0,4);
+		int i = bas.read();
+		while(i!=-1){
+			System.out.println("原值="+(byte)i+"\t\t"+"int类型"+i);
+			i = bas.read();
+		}
+	}
+
+}
+
+3.字节数组输出流ByteArrayOutputStream
+
+-----构造方法
+
+-----ByteArrayOutputStream() ------- 创建一个字节数组输出流,输出流缓冲区的初始容量大小为默认大小--32字节
+
+-----ByteArrayOutputStream(int size) ------ 指定输出流缓冲区的初始容量大小
+
+-----------------------------------------------------------------------
+
+-----常用方法--
+
+<1>int size() ------- 返回缓冲区中的当前字节数
+
+<2>byte[] toByteArray() -------- 以字节数组的形式返回输出流中的当前内容
+
+4.文件字节输入流FileInputStream
+
+注:在在生成FileInputStream类的对象时,如果找不到指定的文件,则抛出FileNotFoundException异常,该异常必须捕获或声明抛出
+
+<1>构造方法
+
+FileInputStream(File file) ------- 打开一个到实际文件的连接
+
+FileInputStream(String name) ------ 通过指定的问价路径打开打开一个连接
+
+public class FileInputDemo {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		File f = new File("E:\\hehe\\1.txt");
+		FileInputStream fis = null;
+		try {
+			fis = new FileInputStream(f);
+			byte[] bytes = new byte[1024];
+			int n = 0;			//得到实际读取到的字节数
+//			循环读取
+			while((n = fis.read(bytes))!=-1){
+				String str1 = new String(bytes,0,n);
+				System.out.print("n="+n);
+				System.out.println(str1);
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally{
+			try{
+				fis.close();
+			}catch(IOException e){
+				e.printStackTrace();
+			}
+		}
+	}
+
+}
+
+5.文件输出流(FileOutputStream)
+
+------构造方法
+
+<1>FileOutputStream(File file) ------- 创建一个文件输出流,参数file指定目标文件
+
+<2>FileOutputStream(File file,boolean append) ----- 创建一个文件输出流,参数file指定目标文件,append指定是否将文件添加到目标文件末尾,如果为false则覆盖原有内容
+
+<3>FileOutputStream(String name) ------- 创建一个文件输出流,name指定目标文件夹的路径信息
+
+<4>FileOutputStream(String name,boolean append)
+
+---------------------------------------------------------------------
+
+注意:
+<1>构造方法中指定的木匾问价按可以暂且不存在
+
+<2>目标文件名称及后缀任意(用记事本打开)
+
+<3>目标文件所在目录必须存在,否则会抛出jav.io.FileNotFoundException异常
+
+<4>目标文件的名称不能是已经存在的目录,否则抛出java.io.FileNotFoundException异常
+
+package weiai.com;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class FileOutpuDemo{
+	public static void main(String[] args) {
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		try {
+			File srcFile = new File("E:/student.txt");
+			fis = new FileInputStream(srcFile);
+			File targetFile = new File("E:/newstudent.txt");
+			fos = new FileOutputStream(targetFile,true);		//追加
+			byte[] bytes = new byte[1024];		//每次读取1024字节
+			int i = fis.read(bytes);
+			while(i!=-1){
+				fos.write(bytes, 0, i);
+				i = fis.read(bytes);
+			}
+			System.out.println("写入结束");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				fis.close();
+				fos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	}
+}
+
+十九、输入输出流(续) ----- 字符流
+
+1.字符输入流Reader
+
+<1>Reader类中的方法
+
+---close()  mark()  skip()  reset()等方法与InputStream类相似
+
+---int read()  ------ 从输入流中读取一个字符,并把它钻花为0-65535之间的整数,如果返回-1,表示已经到了问价末尾,为了提高效率,建议使用另外两种方法
+
+---int read(char[] cbuf) ------- 从输入流中读取若干个字符,并保存到参数cbuf指定的字符数组中,返回读取的字符数
+
+---int read(char[] cbuf,int off,int len)
+
+<2>Reader类的子类
+
+---CharArrayReader类 ------ 将字符数组转换为字符输入流,从中读取字符
+
+---StringReader类 ------ 将字符串转换为字符输入流,从中读取字符
+
+---BufferedReader类 ----- 连接到一个PipedWrite
+
+---InputStreamReader类 ----- 将字节输入流转换为字符输入流,可以指定字符编码
+
+2.字符输出流
+
+<1>Write类中的方法
+
+---void write() ------- 向输出流中写入一个字符
+
+---void write(char[] cbuf) ----- 将字符数组cbuf中的的所有字符谢东输出流中
+
+---void write(char[] cbuf,int off,it len)
+
+---void write(String str) -------- 向输出流中写入一个字符串
+
+---void write(String str,int off,int len)
+
+---append(char c) ------ 将参数c指定的字符添加到输出流中
+
+---append(charSequence csq) ----- 将参数csq指定的字符序列添加到输出流中
+
+---append(charSequence csq,int start,int end) ------ start指定子序列中的第一个字符的索引,end指定最后一个字符后面的索引(即不包括end索引处的字符)‘
+
+注:Write类所有的方法在出错的情况下都会引发IOException异常,关闭一二流后,再对其进行任何操作都会产生错误
+
+<2>Write类的子类
+
+---CharArrayWrite类 ------ 向内存缓冲区中的字符写数据
+
+---StringWrite类 ------ 向内存缓冲区的字符串(StringBuffer)写数据
+
+---BufferedWrite类 ----- 为其他字符输出流提供写缓冲区
+
+---PipedWrite类 ------ 连接到一个PipedWrite类
+
+---OutputStreamReader类 ------ 将字节输出流转化为字符输出流,可以指定编码
+
+-----------------------------------------------------------------------------------
+
+3.字符文件输入流(FileReader)
+
+<1>构造方法
+
+---FileReader(File file) ------ 在给定要读取数据的文件的情况下创建一个新的FileReader对象
+
+---FileReader(String fileName)
+
+<2>注:
+--字符流和字节流的操作步骤相同,创建输入/输出流对象(建立连接管道) ----> 进行读/写操作---->关闭流
+
+--在使用FileReader类的构造方法创建FileReader对象时,都可能会引发一个FileNotFoundException异常,因此需要try---catch语句捕获该异常
+
+4.字符文件输出流(FileWriter)
+
+<1>构造方法
+
+---FileWriter(File file) ----- 在指定File对象的情况下构造一个FileWriter对象,file表示要写入数据的File对象
+
+---FileWriter(File file,boolean append) ------- 是否追加
+
+---FileWriter(String fileName) ------ fileName为完整路径
+
+---FileWriter(String fileName,boolean append)
+
+---------------------------------------------------------------
+
+注:
+<1>在用该类的构造方法创建FileWriter写入对象时,默认字符编码和if缓冲区大小都是适当的。要自己指定这些值,可以先在FileoutputStream上构造一个OutputStreamWriter。FileWriter类的创建不依赖于文件存在与否,如果关联文件不存在,则会自动生成一个新的文件。在创建文件之前,FileWriter将在创建对象时打开它作为输出,如果试图他开一个只读文件,将引发一个IOException异常
+
+<2>在使用FileWriter类的侯傲函数创建FileWriter对象时,可能会引发IOException或者SecurityException异常,因此需要try---catch语句捕获异常
+
+package com.weiai;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class FileWriteDemo {
+
+	public static void main(String[] args) {
+		Scanner input  = new Scanner(System.in);
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter("E:\\student.txt",true);
+			for (int i = 0; i < 5; i++) {
+				System.out.println("第"+(i+1)+"个学生姓名");
+				String name = input.next();
+				fw.write(name);			//循环写入
+			}
+			System.out.println("录入完成");
+			input.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}finally{
+			try {
+				fw.close();
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+		}
+		
+	}
+
+}
+
+5.字符缓冲区输入流(BuferedReader)
+
+<1>构造方法
+
+---BufferedReader(Reader in) --------- 创建一个BufferedReader类修饰参数in指定的字符输入流
+
+---BufferedReader(Reader in,int size) ------ 创建一个BufferedReader类修饰参数in指定的字符输入流,参数size用于指定缓冲区大小,单位为字符
+
+-------------------------------------------------------------------------------
+
+注:
+BufferedReader中提供了readLine()方法-----该方法返回包含行内容的字符串,其中字符串中不包含任何终止符,如果已经到达流末尾,则返回null,readLine()方法表示每次读取一行文本内容,当遇到换行(\n)、回车(\r)、或者挥着后字节跟着换行标识符时,即可认为某行已经终止
+
+package com.weiai;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class BufferedReaderDemo {
+	public static void main(String[] args) {
+		FileReader fr = null;
+		BufferedReader br = null;
+		try {
+			fr = new FileReader("E:/student.txt");
+			br = new BufferedReader(fr);
+			System.out.println("学生信息如下");
+			String strLine = "";
+			while((strLine = br.readLine())!=null){
+				System.out.println(strLine);
+			}
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}catch(IOException e2){
+			e2.printStackTrace();
+		}finally{
+			try {
+				fr.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+}
+
+6.字符缓冲区输出流BufferedWriter
+
+<1>构造方法
+
+---BufferedWriter(Writer out) ----- 创建一个BufferedWriter类就是参数out指定的字符输出流
+
+---BufferedWriter(Writer out,int size)
+
+-----------------------------------------------------------------------------
+
+<2>注:该类还提供了一个新的方法----newLine(),该方法用于写入一个行分隔符,行分隔符字符串由系统属性line.separator定义,而且不一定是单个新行(\n)符
+
+二十、输入输出流(续) ------ File类(抽象类,只处理文件本身属性,不具有读写文件的能力)
+
+<1>构造方法
+
+---File(String pathname) ------ 创建一个文件或目录对象,文件或目录对象由参数pathname指定,path那么为文件的路径名
+
+---File(String parent,String child) ----- parent---- 公共目录路径,child----子目录路径或文件路径
+
+---File(File parent,String child)
+
+<2>常用方法
+
+--boolean canRead() ----- 是否可读
+
+--boolean canWrite() ----- 是否可写
+
+--int compareTo(File pathname) ----- 返回0表示相等,否则不相等
+
+--boolean createNewFile() ----- 如果File对象表示的是一个文件,并且 问价在文件系统中不存在,则在文件系统中创建此文件
+
+--boolean delete() ------- 删除File对象表示的文件或目录(目录必须为空才可以删除)
+
+--boolean exists() ------- 测试此File对象表示的文件或目录是否存在
+
+--File getAbsoluteFile() ---- 返回File对象表示的表示的文件或目录的绝对路径
+
+--String getAbsoutePath() ----- 返回File对象表示的文件或目录的绝对路径的字符串形式
+
+--String getName() ----- 返回File对象表示的文件或目录的名称.该名称是路径名称序列中的最后一个名称,如果路径名称序列为空,则返回空字符串
+
+--String getParent ----- 返回父目录,如果没有则返回null
+
+--String getPath() ----- 返回路径名称字符串,该字符串使用默认名称分隔符对名称序列中的名进行分割
+
+--boolean isAbsolute() ---- 判断是否为绝对路径
+
+--boolean isDirectory() ----- 是否是一个目录
+
+--boolean isFile() ----- 是否是文件
+
+--boolean isHidden() ----- 是否是隐藏文件或目录
+
+--long lastModified() ----- 返回最后一次被修改的时间(与GMT之间的毫秒数)
+
+--long length() ------ 返回文件的长度(单位为字节),若为目录,返回值不确定
+
+--String[] list()  ------ 如果File对象为表示一个目录,则发挥该目录下所有文件和目录的字符串名称列表,如果不是一个名称则返回null
+
+--String[] list(FilenameFilter filter) ----- filter表示一个文件过滤器,返回符合过滤器要求的所有文件和目录的字符串文件列表,若表示的不是一个目录,则返回null
+
+File[] listFiles() ------ 如果表示的是一个目录,则返回该目录下所有文件或目录的File对象列表,若便是德 不是一个目录,则返回null
+
+File[] listFiles(FilenameFilter filter) ---- filter为文件过滤器,返回符合条件的所有文件和目录的File对象列表,如果不是目录则返回null
+
+boolean makir() ------ 创建对应的目录
+
+boolean makirs() ----- 创建多级目录(创建子目录,若父目录不存在则同时创建父目录),如果创建部分父目录后出现异常,已创建的目录不会被撤销。
+
+boolean renameTo(File dest) -----若File对象表示一个文件,则重命名
+
+boolean setReadOnly() ------ 设置文件为只读
+
+----------------------------------------------------------------------------------
+package com.weiai;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Scanner;
+
+public class FileDemo {
+	public static void main(String[] args) {
+		File file = new File("E:/demo.txt");		//创建file对象
+		if(file.exists()){
+			System.out.println("问价名称"+file.getName());
+			System.out.println("文件路径"+file.getPath());
+			System.out.println("文件父路径"+file.getParent());
+			if(file.canWrite()){
+				System.out.println(file.getName()+"是可写的");
+			}
+			else{
+				System.out.println(file.getName()+"是不可写的");
+			}
+			if(file.canRead()){
+				System.out.println(file.getName()+"是可读的");
+			}
+			else{
+				System.out.println(file.getName()+"是不可读的");
+			}
+			System.out.println("文件大小为"+file.length()+"字节");
+		}
+		else{
+			FileWriter fw1 = null;
+			Scanner input = new Scanner(System.in);
+			try {
+				fw1 = new FileWriter("E:/demo.txt");
+				for (int i = 0; i < 5; i++) {
+					System.out.println("第"+(i+1)+"个学生的姓名");
+					String name = input.next();
+					fw1.write(name);
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally{
+				try {
+					fw1.close();
+					input.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+}
+
+二十一、输入输出流(续) ------ RandomAcessFile类(随机访问文件类)
+
+<1>构造方法
+
+--RandomAccessFile(File file,String mode) ------ mode ---- r--只读 rw--读写
+
+--RandomAccessFile(String name,String mode) ---- name--指定文件
+
+<2>常用方法
+
+boolean readBoolean() ----- 从文件中读取一个布尔值
+
+byte readByte() ----- 从文件中读取一个带符号位的字节
+
+char readChar() ----- 从文件中读取一个字符
+
+int readInt() ----- 从文件中读取一个带符号位的整数
+
+long readLong() ----- 从文件中读取一个带符号位的long值
+
+String readLine() ----- 从文件中读取下一行文本
+
+void seek(long pos) ----- 指定从文本其实位置开始的指针偏移量
+
+void writeBoolean(boolean v) ---- 以字节的形式向文本中写入一个布尔值
+
+void writeByte(int v) ----- 以单字节的形式向文本中写入一个byte值
+
+void writeChar(int v) ----- 以双字节的形式向文本中写入一个char值
+
+void writeInt(int v)
+
+void writeLong(long v)
+
+void writeBytes(String s) ----- 以字节序列的形式向文本中写入一个字符串
+
+void skipBytes(int n) ----- 以当前指针为起始位置,跳过n个字节
+------------------------------------------------------------------------------------------
+package com.weiai;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.util.Arrays;
+
+public class RandomDemo {
+	public static void main(String[] args) throws IOException{
+		File demo = new File("demo");
+		if(!demo.exists()){
+			demo.mkdir();
+		}
+		File file = new File(demo,"raf.dat");
+		if(!file.exists()){
+			file.createNewFile();
+		}
+		RandomAccessFile raf = new RandomAccessFile(file,"rw");
+		System.out.println(raf.getFilePointer());
+		raf.write('A');
+		raf.write('B');
+		int i = 0x7fffffff;
+		raf.write(i>>>24);
+		raf.write(i>>>16);
+		raf.write(i>>>8);
+		raf.write(i);
+		raf.writeInt(i);
+		String s = "中";
+		byte[] bytes = s.getBytes("gbk");
+		raf.write(bytes);
+		System.out.println(raf.getFilePointer());
+		System.out.println(raf.length());
+		raf.seek(0);
+		byte[] buf = new byte[(int)raf.length()];
+		raf.read(buf);
+		System.out.println(Arrays.toString(buf));
+		String s1 = new String(buf);
+		System.out.println(s1);
+		for (byte b : buf) {
+			System.out.print(b+"  ");
+		}
+		raf.close();
+	}
+}
+
+-----------------------------------------------------------------------------------------
+package com.weiai;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.FilterWriter;
+import java.io.IOException;
+import java.util.List;
+
+/*
+ * Product类
+ * 3个属性-no(商品编号)--name(商品名称)--price(商品价格)
+ * 2个方法 -- writePro(价格商品信息写入到磁盘文件中)--readPro(从磁盘中读取商品信息并打印大控制台)
+ * 另外有该类的toString()方法和带有3个参数的构造方法
+ * 
+ */
+public class Product {
+	private int no;
+	private String name;
+	private double price;
+	public Product(int no,String name,double price){
+		this.no = no;
+		this.name = name;
+		this.price = price;
+	}
+	public String toString(){
+		return "商品编号:"+this.no+",商品名称:"+this.name+",商品价格:"+this.price+"\n";
+	}
+	public static void writePro(List products){
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter("E:/product.txt");
+			for (int i = 0; i < products.size(); i++) {
+			fw.write(products.get(i).toString());		//循环写入
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}finally{
+			try {
+				fw.close();
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+		}
+	}
+	
+	public static void readPro(){
+		FileReader fr = null;
+		BufferedReader br = null;
+		try {
+			fr = new FileReader("E:/product.txt");
+			br = new BufferedReader(fr);
+			String str = "";
+			while((str=br.readLine())!=null){
+				System.out.println(str);
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}finally{
+			try {
+				br.close();
+				fr.close();
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+		}
+	}
+	
+}
+------------------------------------------------------------------------------------------
+package com.weiai;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class IOaemo {
+
+	public static void main(String[] args) {
+		Product product1 = new Product(1001,"联想笔记本电脑",4850.5);
+		Product product2 = new Product(1002,"佳能照相机",1100);
+		List products = new ArrayList();
+		products.add(product1);
+		products.add(product2);
+		Product.writePro(products);
+		System.out.println("***************商品信息****************");
+		Product.readPro();
+	}
+
+}
+----------------------------------------------------------------------------------------
+
+package comweiai;
+import java.io.File;
+import java.io.IOException;
+//列出File的一些常用操作,比如过滤、遍历等操作
+public class FileUtils {
+	/**
+	 * 列出指定目录下(包括其子目录)的所有文件
+	 * @param dir
+	 * @throws IOException
+	 */
+	public static void listDirectory(File dir) throws IOException{
+		if(!dir.exists()){
+			throw new IllegalArgumentException("目录"+dir+"不存在");
+		}
+		if(!dir.isDirectory()){
+			throw new IllegalArgumentException(dir+"不是目录");
+		}
+		/*
+		String[] filenames = dir.list();		//list()用于列出当前目录下的目录和文件
+		for (String string : filenames) {
+			System.out.println(dir+"\\"+string);
+		}
+		*/
+//		如果要遍历子目录下的内容就需要构造成File对象做递归操作
+		File[] files = dir.listFiles();
+		if(files!=null&&files.length>0){
+			for (File file : files) {
+				if(file.isDirectory()){
+					listDirectory(file);
+				}else{
+					System.out.println(file);
+				}
+			}
+		}
+	}
+}
+
+
+package comweiai;
+
+import java.io.File;
+import java.io.IOException;
+
+public class FileUtilsTest {
+	public static void main(String[] args) throws IOException{
+		FileUtils.listDirectory(new File("E:/java"));
+	}
+}
+
+---------------------------------------------------------------------------------------
+
+二十二、集合框架
+
+1.Set接口
+
+<1>Set接口也实现了Collection接口,为无序集合,它不能包含重复元素,实现Set接口的常用类有HashSet和TreeSet,它们都可以容纳所有类型的对象,但不能保证序列顺序恒久不变
+
+--HashSet ----- 由哈希表(实际上是HashMap实例)支持,它不保证Set的迭代顺序,特别是它不能保证爱顺序恒久不变,此类只允许使用一个null元素
+
+--TreeSet ----- 该类不仅实现了Set接口,还实现了java.util.SortedSet接口,使用TreeSet类实现的Set集合的对象必须实现Comparable接口;也可能是按照指定比较器递增排列,即可以通过比较器对使用TreeSet类实现的Set集合中的对象进行排序
+
+--注:Collection接口是最基本的集合接口,一个Collectio代表一组元素
+
+2.List接口
+
+--List接口实现了Collection接口,为有序集合,允许有相同的元素,使用List能够精确地控制每个元素插入的位置,用户能够使用索引(元素在List中的位置,类似于数组索引)来访问List中的元素,这类似于数组,实现List接口的常用类有ArrayList接口和LinkList,他们都可以容纳所有的类型的对象,包括null,并且保证元素的存储顺序
+
+--ArrayList ---- 实现了可变大小的数组,它的优点在于遍历元素和随机访问元素的效率比较高
+
+--LinkedList ---- 提供了额外的addFirst()、addList()、removeFirst()、removeLast()等方法,可以在LinkedList的首部或尾部进行插入或删除操作,这些方法使得LinkedList可被用作堆栈(stack)或者队列(queue)
+
+3.Map接口
+
+--Map是一种键值对集合,实现Map接口的常用类有HashMap和TreeMap,他们用于存储键到值映射的对象
+
+--HashMap ----- 按哈希算法来存取键对象
+
+--TreeMap ----- 可以对键值对象进行排序
+
+----------------------------------------------------------------------------------------
+
+1.Collection接口(List接口和Set接口的父接口)
+
+<1>Collection接口中的方法(List集合和Set集合的通用方法)
+
+--boolean add(E e)  ------- 向集合中添加一个元素,E是元素的数据类型
+
+--boolean addAll(Collection c) ------ 向集合中添加集合c中的所有元素
+
+--void clear() ----- 删除集合中的所有元素
+
+--boolean contains(Object o) ------ 判断集合中是否存在指定元素
+
+--boolean containsAll(Collection c) ------ 判断集合中是否包含集合c中的所有元素
+
+--boolean isEmpty() ------ 判断集合是否为空
+
+--Iterator<E>iterator()  ------ 返回一个Iterator对象,用于遍历集合中的元素
+
+--boolean remove(Object o) ----- 凑够集合中删除一个指定元素
+
+--boolean removeAll(Collection c) ----- 从集合中删除所有在集合c中出现的元素
+
+--boolean retainAll(Collection c) ----- 仅保留集合中所有在集合c中出现的元素
+
+--int size() ------ 返回集合中元素的个数
+
+--Object[] toArray() ----- 返回包含此集合中所有元素的数组
+
+-----------------------------------------------------------------------------------------
+
+2.无序列表-------Set集合(不允许出现重复的集合元素,最多只允许包含一个null元素)
+
+<1>HashSet类
+
+--构造方法
+
+----HashSet() ------- 构造一个新的空的Set集合
+
+----HashSet(Collection<?extends E>c) ------ 构造一个包含指定Collection集合元素的新Set集合,其中<>中的extends表示HashSet的父类,即指明该Set集合中存放的集合元素的类型,c便是其中的元素将存放在此Set集合中
+
+例:HashSet hs = new HashSet();
+
+HashSet<String> hss = new HashSet<String>()
+
+----------------------------------------------------
+
+package com.weiai;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Iterator;
+public class HashSetDemo {
+	public static void main(String[] args) {
+		Set<String> userSet = new HashSet<String>();		//创建一个空的Set集合
+		String user1 = new String("王丽丽");
+		String user2 = new String("马腾");
+		String user3 = new String("张辉");
+		String user4 = new String("张芳");
+		userSet.add(user1);			//存储到Set集合中
+		userSet.add(user2);
+		userSet.add(user3);
+		userSet.add(user4);
+		System.out.println("新员工有");
+		Iterator<String> it = userSet.iterator();
+		while(it.hasNext()){
+			System.out.println((String)it.next());		//输出Set集合中的元素
+		}
+		System.out.println("共招进"+userSet.size()+"人");
+	}
+}
+
+---注:如果在上述集合中再添加一个重复的元素，则输出结果不变(Set集合中你允许有重复的元素,相同元素会覆盖)
+
+------------------------------------------------------------------------------------
+
+<2>TreeSet类(不仅实现了Set接口还实现了SortedSet接口,SortedSet接口是Set接口的子接口,可以对集合进行自然排序,使用TreeSet实现的Set集合在默认情况下是自然排序的--升序)
+
+--注:TreeSet只能对实现了comparable接口的类的对象进行排序(compareTo()方法  相等--0、大于--大于0的数、小于--小于0的数)
+
+--JDK类库中实现了Compareable接口的类及其对象的比较方式
+
+----包装类(BigDecimal、BigInteger、Byte、Double、Float、Integer、Long、Short) ---- 按数字大小比较
+
+----Character  ------ 按字符的Unicode值得数字大小比较
+
+----String  ------ 按字符串中字符的Unicode值得数字大小比较
+
+--------------------------------------------------------------------------------------
+
+--TreeSet类中的方法
+
+----E first()  ----  返回此集合中的第一个元素。其中E表示集合中元素的数据类型
+
+----E lsast()  ----  返回集合中的最后一个元素
+
+----E poolFirst() ---- 获取并移除集合中的第一个元素
+
+----E poolLast()
+
+----SortedSet<E>subSet(E fromElement,E toElement) ----- 发挥一个新的集合,新集合中包含原集合中fromElement对象与toElement对象之间的所有对象(包含fromElement对象,不包含toElement对象)
+
+----SortedSet<E>headSet<E toElemnet> ----- 返回一个新集合,包含原集合中toElement对象之前的所有对象(不包含toElemet对象)
+
+----SortedSet<E>tailSet(E fromElement) ----- 返回一个新集合,包含fromElement对象之后的所有元素(包含fromElement对象)
+
+package com.weiai;
+
+import java.util.Iterator;
+import java.util.Scanner;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+public class TreeSetDemo {
+	public static void main(String[] args) {
+		TreeSet<Double> scores = new TreeSet<Double>();				//Double包装类(对象)
+		Scanner input = new Scanner(System.in);
+		System.out.println("---------------学生成绩管理系统---------------");
+		for (int i = 0; i < 5; i++) {
+			System.out.println("第"+(i+1)+"个学生的成绩");
+			double score = input.nextDouble();
+			scores.add(Double.valueOf(score));				//(转化为对象)
+		}
+		Iterator<Double>it = scores.iterator();				//创建Iterator对象
+		System.out.println("------------------学生成绩从低到高排列-----------------");
+		while(it.hasNext()){
+			System.out.print(it.next()+"\t");
+		}
+		System.out.println("\n请输入要查询的成绩");
+		double searchScore = input.nextDouble();
+		if(scores.contains(searchScore)){
+			System.out.println("成绩为"+searchScore+"的学生存在");
+		}else{
+			System.out.println("成绩为"+searchScore+"的学生存在");
+		}
+		//查村不及格的成绩
+		SortedSet<Double> score1 = scores.headSet(60.0);
+		System.out.println("----------不及格的成绩---------");
+		for (int i = 0; i < score1.toArray().length; i++) {
+			System.out.print(score1.toArray()[i]+"\t");
+		}
+		//查询90分以上的成绩
+		SortedSet<Double> score2 = scores.tailSet(90.0);
+		System.out.println("\n90分以上的成绩");
+		for (int i = 0; i < score2.toArray().length; i++) {
+			System.out.print(score2.toArray()[i]+"\t");
+		}
+	}
+}
+-------------------------------------------------------------------------------------
+注: 在使用自然排序时,只能向TreeSet集合中添加相同数据类型的对象,否则会抛出ClassCastException异常,如果向TreeSet集合中添加了一个Double类型的对象,则后面只能添加Double对象,不能再添加其他类型的对象。
+---------------------------------------------------------------------------------------
+
+3.有序列表------List集合
+
+--List接口同样实现了Collection接口,它主要有两个实现类,ArrayList类和LinkedList类,在List集合中允许出现重复元素,与Set集合不同的是,在List集合中的元素是有序的,可以根据索引位置来检索List集合中的元素(第一个元素索引为0)
+
+<1>ArrayList类(适合于快速访问元素)
+
+--构造方法
+
+----ArrayList() ------ 构造一个初始容量为10 的空列表
+
+----ArrayList(Collection<? extends E>c) ------ 构造一个包含指定Collection的元素的列表,这些元素是按照该Collection的迭代器返回它们的顺序排列的
+
+-----------------------------------------
+
+--ArrayList包含的List接口中的方法
+
+----E get(int index) ------ 返回此集合中的指定索引位置的元素,E为集合中元素的数据类型
+
+----int index(Object o) ----- 返回此集合中第一次出现指定元素的索引,如果此集合不包含该元素,则返回-1
+
+----int lastIndexOf(Object o) ------ 返回该集合中最后一次出现该元素的索引,如果此集合不包含该元素,则返回-1
+
+----E set(int index,E element) ----- 将该集合中指定索引位置的元素修改为element指定的元素,返回该位置处元类的元素
+
+----List <E> subList(int fromIndex,int toIndex) ------ 返回一个fromIndex到toIndex之间的元素的集合(包含fromIndex,不包含toIndex)
+
+package com.weiai;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class ArrayListDemo {
+	public static void main(String[] args) {
+		List<String> students = new ArrayList<String>();
+		Scanner input = new Scanner(System.in);
+		for (int i = 0; i < 3; i++) {
+			System.out.println("学生"+i+1+"的姓名");
+			String name = input.next();
+			students.add(name);
+		}
+		input.close();
+		System.out.println("刚录入的学生");
+		for (int i = 0; i < students.size(); i++) {
+			System.out.print(students.get(i)+"\t\t");
+		}
+	}
+}
+--------------------------------------------------------------------------------------
+
+<2>LinkedList类(适合对集合的头部和尾部进行插入和删除操作)
+
+--LinkedList类中的方法
+
+----void addFirst(E e) ------ 将指定元素添加到此集合的开头
+
+----void addLast(E e) ------ 将指定元素添加到此集合的末尾
+
+----E getFirst() ----- 返回集合第一个元素
+
+----E getLast()
+
+----E removeFirst()
+
+----E removeLast()
+
+package com.weiai;
+
+import java.util.LinkedList;
+
+public class LinkedListDemo {
+	public static void main(String[] args) {
+		LinkedList<String> students = new LinkedList<String>();
+		String stu1 = new String("张三");
+		String stu2 = new String("李四");
+		String stu3 = new String("王五");
+		students.add(stu1);
+		students.add(stu2);
+		students.add(stu3);
+		String stu4 = new String("赵六");
+		students.addLast(stu4);					//向和末尾添加新元素
+		System.out.println("-------------学生信息----------------");
+		System.out.println("目前学生");
+		for (int i = 0; i < students.size(); i++) {
+			System.out.print(students.get(i)+"\t\t");
+		}
+		System.out.println("\n第一个报道的学生"+students.getFirst());
+		System.out.println("最后一个报名的学生为"+students.getLast());
+		students.removeLast();				//删除最后报道的学生
+		System.out.println("删除最后一个人学生后的学生为");
+		for (int i = 0; i < students.size(); i++) {
+			System.out.print(students.get(i)+"\t\t");
+		}
+	}
+}
+----------------------------------------------------------------------------------------
+
+4.映射------Map接口(映射是一种键值对集合,Map集合中的每一个元素都包含一个键对象和一个值对象,其中Ian对象不允许重复,值对象可以重复,而且值对象还可以是Map类型)
+
+--Map接口的实现类有两个:HashMap类和TreeMap类
+
+----HashMap类按哈希算法来存取键对象
+
+----TreeMap类可以对键值对进行排序
+
+-----------------------------------------------------
+
+--Map接口中的方法
+
+----V get(Object key) ----- 返回Map集合中指定键对象所对应的值,V表示值的数据类型
+
+----V put(K key,V value) ---- 向Map结合中添加键--值对,返回key以前对应的value,如果没有则返回null
+
+----V remove(Object key) ------ 从Map集合中删除key所对应的键--值对,返回key所对应的value,如果没有则返回null
+
+----Set entrySet() ------ 返回Map集合中所有键--值对的Set集合,此Set集合中的元素的数据类型为Map.Entry
+
+----Set keySet() -----  返回Map集合中所有键对象的Set集合
+
+注:TreeMap类中的应用于HashMap类相似,不通的是,HashMap对键对象进行排序
+
+
+package com.weiai;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class HashMapDemo {
+	public static void main(String[] args) {
+		Scanner input = new Scanner(System.in);
+		Map<Integer,String> users = new HashMap<Integer,String>();
+		String user1 = new String("张三");
+		String user2 = new String("李四");
+		String user3 = new String("王五");
+		String user4 = new String("赵六");
+		users.put(1001,user1);					//存储对象
+		users.put(1002,user2);
+		users.put(1003,user3);
+		users.put(1004,user4);
+		System.out.println("************员工信息*************");
+		for (Integer userno : users.keySet()) {
+			System.out.println("userno"+":"+users.get(userno));
+		}
+		System.out.println("****************员工管理****************");
+		System.out.println("请输入要离职的员工股编号");
+		int num = input.nextInt();
+		if(users.containsKey(Integer.valueOf(num))){
+			users.remove(Integer.valueOf(num));
+			System.out.println("该员工已经删除");
+		}else{
+			System.out.println("该员工不存在");
+		}
+		System.out.println("-----在职的员工-----");
+		for (String name : users.values()) {
+			System.out.println(name);
+		}
+	}
+}
+--------------------------------------------------------------------------------
+
+5.集合辅助类
+
+<1>集合排序
+
+--Collections类中静态方法sort() --- 用于对集合元素进行升序排列,列表中的所有元素必须实现Comparable接口,该激烈表中的所有元素都必须是使用指定比较器可相互比较的
+
+--该方法的重载
+
+----void sort() ----- 根据元素的自然顺序对集合中的元素进行升序排列
+
+----void sort(List list,Comparator comparator) ----- 按照comparator参数指定的排序方式对集合中的元素进行排序
+
+package com.weiai;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+
+public class SortDemo {
+	public static void main(String[] args) {
+		Scanner input = new Scanner(System.in);
+		List<Integer>users = new ArrayList<Integer>();
+		for (int i = 0; i < 5; i++) {
+			System.out.println("请输入第"+(i+1)+"个学生的成绩");
+			int score = input.nextInt();
+			users.add(Integer.valueOf(score));
+		}
+		input.close();
+		Collections.sort(users);			//调用sort方法排序
+		System.out.println("分数从低到高的书序为");
+		for (int i = 0; i < users.size(); i++) {
+			System.out.print(users.get(i)+"\t\t");
+		}
+	}
+}
+-------------------------------------------------------------------------------
+
+<2>集合反序
+
+--使用Collections类中的静态方法reverse()对指定集合进行反序
+
+package com.weiai;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+
+public class ReverseDemo {
+	public static void main(String[] args) {
+		Scanner input = new Scanner(System.in);
+		List<String>students = new ArrayList<String>();
+		System.out.println("*******学生信息********");
+		for (int i = 0; i < 5; i++) {
+			System.out.println("请输入第"+(i+1)+"个学生姓名");
+			String name = input.next();
+			students.add(name);
+		}
+		input.close();
+		Collections.reverse(students);
+		System.out.println("反序后输出结果");
+		for (int i = 0; i < 5; i++) {
+			System.out.print(students.get(i)+"\t\t");
+		}
+	}
+}
+-----------------------------------------------------------------------------------
+
+<3>替换所有元素
+
+--使用Collections类中的静态方法----fill() ----- 对指定集合的所有元素进行替换操作
+
+void fill(List<? super T>list,T obj) ---- list为要替换的集合对象  obj----用来替换指定集合的元素值
+
+package com.weiai;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+
+public class FillDemo {
+	public static void main(String[] args) {
+		Scanner input = new Scanner(System.in);
+		List<String> students = new ArrayList<String>();
+		System.out.println("*********学生信息*********");
+		for (int i = 0; i < 5; i++) {
+			System.out.println("请输入第"+(i+1)+"个学生的姓名");
+			String name = input.next();
+			students.add(name);
+		}
+		input.close();
+		System.out.println("重置学生信息,默认为无名");
+		Collections.fill(students, "无名");
+		System.out.println("重置后的学生信息为");
+		for (int i = 0; i < students.size(); i++) {
+			System.out.print(students.get(i)+"\t\t");
+		}
+	}
+}
+-------------------------------------------------------------------------------------
+
+<4>复制集合 ----- Collections类中提供了静态方法------ void copy(List <? super T> dest,List <? extends T>src) ---- dest --- 目标集合对象  src ---- 源集合对象
+
+--注:目标集合的长度至少和源集合的长度相等,如果目标集合的长度更长,则不影响目标集合中的其余元素(只影响前面的元素)。如果目标集合长度不够而无法包含整个源集合元素时,程序将抛出IndexOutOfBoundsException异常
+
+
+package com.weiai;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Scanner;
+
+class CopyDemo {
+
+	public static void main(String[] args) {
+		Scanner input = new Scanner(System.in);
+		List<String> srcList = new ArrayList<String>();
+		List<String> destList = new ArrayList<String>();
+		destList.add("张三");
+		destList.add("李四");
+		destList.add("王五");
+		destList.add("赵六");
+		System.out.println("原有学生如下");
+		for (int i = 0; i < destList.size(); i++) {
+			System.out.print(destList.get(i)+"\t\t");
+		}
+		System.out.println("\n替换的学生名单");
+		for (int j = 0; j < 3; j++) {
+			System.out.println("请输入第"+(j+1)+"个学生姓名");
+			String name = input.next();
+			srcList.add(name);
+		}
+		input.close();
+		//调用copy()方法将当前信息复制到原有学生信息集合中
+		Collections.copy(destList,srcList);
+		for (int i = 0; i < destList.size(); i++) {
+			System.out.print(destList.get(i)+"\t\t");
+		}
+	}
+}
+------------------------------------------------------------------------------------------
+6.集合的高级应用----泛型
+
+package com.weiai;
+
+public class User {
+	private String name;
+	private String sex;
+	private int age;
+	private String address;
+	public User(String name, String sex, int age, String address) {
+		super();
+		this.name = name;
+		this.sex = sex;
+		this.age = age;
+		this.address = address;
+	}
+	public String toString() {
+		return this.name+"\t\t"+this.sex+"\t\t"+this.age+"\t\t"+this.address;
+	}
+}
+
+
+package com.weiai;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class FanXingDemo {
+	public static void main(String[] args) {
+		User user1 = new User("张三","男",28,"河北");
+		User user2 = new User("李四","男",23,"北京");
+		User user3 = new User("小红","女",20,"天津");
+		List<User> users = new ArrayList<User>();
+		users.add(user1);
+		users.add(user2);
+		users.add(user3);
+		System.out.println("***********用户信息*************");
+		System.out.println("姓名\t\t性别\t\t年龄\t\t家庭地址");
+		for (int i = 0; i < users.size(); i++) {
+			System.out.println(users.get(i));
+		}
+	}
+}
+-----------------------------------------------------------------------------------------
+
+二十三、线程(class Thread/interfce Runnable)
+
+1.进程=线程+资源(内存)
+
+2.Thread常用的方法
+
+<1>线程的创建
+
+--Thread()
+
+--Thread(String name)
+
+--Thread(Runnable target)
+
+--Thread(Runnable target,String name)
+
+2.线程的方法
+
+--void start() ----- 启动线程
+
+--static void sleep(long millis) ---- 休眠指定的毫秒数
+
+--static void sleep(long millis,int nanos) ---- 休眠时间精确到纳秒
+
+--void join() ------ 使其他线程等待当前线程终止
+
+--void join(long millis)
+
+--void join(long millis,int nanos) ---- 最多等待指定时间后停止
+
+--static void yield() ---- 当前运行的线程释放处理器资源
+
+--static Thread currentThread() ---- 返回当前运行的线程引用
+
+package com.weiai;
+
+public class Actor extends Thread {
+	public void run(){
+		System.out.println(getName()+"是一个演员");
+		int count = 0;
+		while(true){
+			System.out.println(getName()+"登台演出"+(++count)+"次");
+			if(count==100){
+				break;
+			}
+			if(count%10==0){
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		System.out.println(getName()+"演出结束");
+	}
+	
+	public static void main(String[] args) {
+		Thread actor = new Actor();
+		actor.setName("SZH");
+		actor.start();
+		Thread actressThread = new Thread(new Actress(),"WZY");
+		actressThread.start();
+	}
+}
+
+class Actress implements Runnable{
+
+	public void run(){
+		System.out.println(Thread.currentThread().getName()+"是一个演员");
+		int count = 0;
+		while(true){
+			System.out.println(Thread.currentThread().getName()+"登台演出"+(++count)+"次");
+			if(count==100){
+				break;
+			}
+			if(count%10==0){
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		System.out.println(Thread.currentThread().getName()+"演出结束");
+	}
+}
+------------------------------------------------------------------------------
+
+package com.weiai;
+
+//军队线程
+//模拟作战双方的行为
+public class ArmyRunnable implements Runnable {
+	//volatile保证了线程可以正确地读取其他线程写入的值
+	volatile boolean keepRunning = true;
+	@Override
+	public void run() {
+		while(keepRunning){
+			//5连击
+			for (int i = 0; i < 5; i++) {
+				System.out.println(Thread.currentThread().getName()+"进攻对方【"+i+"】");
+				//让出了处理器时间,贡品竞争cup资源
+				Thread.yield();
+			}
+		}
+		System.out.println(Thread.currentThread().getName()+"结束了战斗");
+	}
+
+}
+---------------------------------------------
+
+package com.weiai;
+
+/**
+ * 隋唐演义大戏舞台
+ * @author 振鸿
+ *
+ */
+public class Stage extends Thread {
+	public void run(){
+		System.out.println("开始观看隋唐演义啦");
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		System.out.println("大幕徐徐拉开");
+		
+		try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		System.out.println("话说隋朝末年……");
+		ArmyRunnable armyTaskOfSuiDynasty = new ArmyRunnable();
+		ArmyRunnable armyTaskOfRevolt = new ArmyRunnable();
+		//使用Runnable接口创建线程
+		Thread armyOfSuiDynasty = new Thread(armyTaskOfSuiDynasty,"隋军");
+		Thread armyOfRevolt = new Thread(armyTaskOfRevolt,"农民军");
+		armyOfSuiDynasty.start();
+		armyOfRevolt.start();
+		//舞台线程休眠
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("正当双方激战正酣,半路杀出个程咬金");
+		
+		Thread cheng = new KeyPersonThread();
+		cheng.setName("程咬金");
+		System.out.println("程咬金的理想就是结束战争");
+		//停止线程
+		armyTaskOfSuiDynasty.keepRunning = false;
+		armyTaskOfRevolt.keepRunning = false;
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		cheng.start();
+		try {
+			cheng.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		System.out.println("战争结束啦");
+		System.out.println("谢谢观看");
+	}
+	public static void main(String[] args) {
+		new Stage().start();
+		
+	}
+
+}
+----------------------------------------------
+
+package com.weiai;
+
+public class KeyPersonThread extends Thread {
+	public void run(){
+		System.out.println(Thread.currentThread().getName()+"开始了战斗");
+		for (int i = 0; i < 10; i++) {
+			System.out.println(Thread.currentThread().getName()+"左突右杀,攻击隋军……");
+		}
+		System.out.println(Thread.currentThread().getName()+"结束了战斗");
+	}
+}
+----------------------------------------------------------------------------------------
+
+二十四、Swing程序开发
+
+1.Swing容器和组件的层次-----Swing组件存放在javax.swing包中,Swing组件都是AWT的Container类的直接子类和间接子类
+
+<1>JComponent类的层次结构图
+
+--JComponent类位于javax.swing包中,是一个抽象类,用于定义所有子类组件的一般方法,是除顶层容器外所有swing组件的父类  javalangObject ---->javaawtComponent ---->javaawtContainer ---->javaxSwingJComponent
+
+--其中每个类的作用
+
+----Component类 ----- 该类为一个抽象类,是AWT中最核心的类,他是构成java图形用户界面的基础,大部分组件都是由该类派生出来的,在Component类中定义了组件所具有的一般功能,基本的绘画支持,字体和颜色等外形控制,图像处理以及组件状态控制.
+
+----Container类 ----- 该类是由Component类派生的一个特殊类,用来表示各种GUI组件的容器
+
+--------组件的管理 --- 方法add()可以向其中添加一个组件,remove可以删除其中的一个组件
+
+--------布局管理 --- 每个容器都和一个布局管理器向关联,以确定其中组件的布局.容器可以通过setLayout方法设置某种布局方式
+
+<2>Swing包(该类由许多包组成,这些包中的类相互协作完成GUI设计)
+
+--javax.swing ---- 提供一组轻量级组件,尽量让这些组件在所有平台上的工作方式都相同
+
+--javax.swing.border ---- 提供围绕Swing组件绘制特殊边框的类和接口
+
+--javax.swing.colorchooser ---- 包含功JColorChooser组件使用的类和接口
+
+--javax.swing.event ---- 供Swing组件触发的事件使用
+
+--javax.swing.filechooser ---- 提供JFileChooser组件使用的类和接口
+
+--javax.swing.plaf ---- 提供一个接口和许多抽象类,Swingyoga他们来提供自己的可插入外观功能
+
+--javax.swing.plaf.basic ---- 提供了根据基本外观构建的用户界面对象
+
+--javax.swing.table ---- 提供用于处理javax.swing.Jtable的类和接口
+
+--javax.swing.text ---- 提供类HTMLEditorKit和创建HTML编辑器的支持类
+
+--javax.swing.text.html ---- 提供类HTMLEditorKit和创建HTML编辑器的支持类
+
+--javax.swing.text.html.parser ---- 提供默认的HTML解析器及其支持类
+
+--javax.swing.text.rtf ---- 提供一个RTFEditorKit类,用于创建富文本格式(Rich-Text-Format)的文本编辑器
+
+--javax.swing.tree ---- 提供处理javax.swing.JTree的类和接口
+
+--javax.swing.undo ---- 允许开发人员对应用程序(例如文本编辑器)中的撤销/恢复提供支持
+
+<3>组件的分类
+
+--顶层容器
+
+Swing的顶层容器主要有3个:JFrame、JDialog、和JApplet,都是重量级组件.分别继承了AWT组件Frame、Dialog和Applet类,每个顶层容器都有一个内容面板,通常直接或间接地容纳别的可视组件.可以有选择地对顶层容器添加菜单,惨淡被放置在顶层容器上,但是在内容面板之外.
+
+--中间层容器
+
+中间层容器存在的目的是容纳别的组件,这些Swing组件包括JMenuBar、JOptionPane、JRootPane、JLayeredPane、JPanel、JInternalFrame、JScrollPane、JSplitePane、JTabbedPane、JToolBar、JDeskTopPane、JViewPort、JEditorPane、JTextPane
+
+--特殊容器
+
+特殊容器在GUI中起特殊作用的中间层容器,包括JInterFrame、JLayeredPane、JRootpane等
+
+--基本组件
+
+---- 用来获取用户输入 ----- JButton、JRadioButton、JCheckBox、JComboBox、JList、JMenu、Jslider、JTextField、JPopupMenu、JTextArea、JPassWordField
+
+---- 用来显示信息 ----- JLabel、JProgressBar、JToolTip
+
+---- 提供格式换信息 ----- JColorChooser、JFileChooser、JTable、JTree
+
+2.窗口和面板(所有的窗口来都继承自JFrame类)
+
+<1>JFrame窗口(JFrame类继承了AWT的Frame类,支持Swing体系结构的高级GUI属性.JFrame用来设计类似于Windows系统中的窗口形式的界面,窗口的默认布局为BorderLayout)
+
+--常用的构造方法
+
+----JFrame() ---- 创建一个不含标题的窗口
+
+----JFrame(String title) ---- 创建一个标题显示为title字符串的窗口
+
+--常用方法
+
+----Componentadd ----- 将指定的组件追加到窗口的尾部
+
+----void setSize(int width,int height) ----- 设置窗口的大小(单位为像素)
+
+----void setBounds(int x,int y,int width,int height) ----- 设置窗口的大小(x,y为表示窗口左上顶点的坐标,同时设置窗口宽高)
+
+----void setVisible(boolean b) ----- 设置窗口是否可见
+
+----void setTitle(String title) ----- 设置窗口的标题
+
+----Container getContentPane() ----- 返回此窗体的contentPane对象
+
+----int getDefaultCloseOperation() ----- 返回用户单击窗体的关闭按钮时执行的操作
+
+----void remove(Component comp) ----- 从该容器中移除指定组件
+
+----void setContentPane(Container contentPane) ----- 设置contentPane属性
+
+----void setDefaultCloseOperation(int operation) ----- 设置用户在此窗体上单击【关闭】按钮时默认执行的操作,这里的动作包括4种情况,分别对应4个常量:DO_NOTHING_ON_CLOSE(不执行任何操作)、DISPOSE_ON_CLOSE(释放窗体对象)、HIDE_ON_CLOSE(隐藏窗体)和EXIT_ON_CLOSE(退出JVM)
+
+----void setDefaultLookAndFeelDecorated(boolean defaultLookFeelDecorated) ----- 创建的JFrame是否应当具有当前外观为其提供的window装饰(如:边框、标题)等的提示
+
+----void setIconImage(Image image) ----- 设置要作为此窗口图标显示的图像
+
+---void setJMenuBar(JMenuBar menubar) ----- 设置此窗体的菜单栏
+
+----void setLayout(LayoutManager manager) ----- 设置布局管理器
+------------------------------------------------------------------
+注:当JFrame窗口被创建后,默认情况下是不可见的,必须同过一下步骤使其可见
+--调用setSize(int width,int height)方法或者setBounds(int x,int y,int width,int height)方法,显式设置窗口的大小,或者调用pack()方法自动调节窗口大小
+
+--调用setVisible(true)方法使窗口可见
+
+package com.weiai;
+
+import javax.swing.JFrame;
+
+public class JFrameDemo {
+	public static void main(String[] args) {
+		JFrame jf = new JFrame();
+		jf.setTitle("我的窗口");
+		jf.setBounds(300,300,400,400);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jf.setVisible(true);
+	}
+}
+-----------------------------------------------------
+<2>JPanel面板
+
+--JPanel是一个中间层容器,它能容纳组件,将组件结合在一起,但它本身必须添加到其它容器中使用
+
+--构造方法
+
+----JPanel() ----- 使用默认的布局管理器创建新面板,默认的布局管理器是FlowLayout
+
+----JPanel(LayoutManagerLayout layout) ----- 创建指定布局管理器的JPanel对象
+
+--------------------------------------------
+
+--常用方法
+
+----Component add(Component comp) ----- 将指定的容器追加到此容器底部
+
+----void remove(Component comp) ----- 从容器中移除指定组件
+
+----void setFont(Font f) ----- 设置容器的字体
+
+----void setLayout(LayoutManager mgr) ----- 设置容器的布局管理器
+
+----void setBackground(Color c) ----- 设置组件的背景色
+-------------------------------------------------------------------
+package com.weiai;
+
+import java.awt.Color;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class JFrameDemo {
+	public static void main(String[] args) {
+		JFrame jf = new JFrame();
+		jf.setTitle("我的窗口");
+		jf.setBounds(300,300,400,400);
+		JPanel jp = new JPanel();
+		jp.setBackground(Color.LIGHT_GRAY);
+		jf.add(jp);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jf.setVisible(true);
+	}
+}
+------------------------------------------------------------------
+3.Swing基本组件
+
+<1>按钮组件------JButton
+
+--构造方法
+
+----JButton() ----- 创建一个无标签文本,无图标的按钮
+
+----JButton(Icon icon) ----- 创建一个无标签文本,有图标的按钮
+
+----JButton(String text)
+
+----JButton(String text,Icon icon)
+
+----------------------------------------
+
+--常用方法
+
+----addActionListener(ActionListener listener) ----- 为按钮组件注册ActionListener监听
+
+----void setIcon(Icon icon)
+
+----void setText(String text)
+
+----void setMargin(Insets m) ----- 设置按钮边框和标签之间的空白
+
+----void setMnemonic(int nmemonic) ----- 设置按钮的键盘快捷键,偶设置的额快捷键在实际操作时,于鏊结合ALT键实现
+
+----void setPressedIcon(Icon icon) ----- 设单击按钮时的图标
+
+----void setSelected(Icon icon) ----- 设置选择按钮时的图标
+
+----void setRolloverIcon(Icon icon) ----- 设置鼠标移动到按钮区域时的图标
+
+----void setDisabledIcon(Icon icon) ----- 设置按钮无效状态下的图标
+
+----void setVerticalAlignment(int align) ----- 设置图标和文本的垂直对其方式
+
+----void setHorizontalAlignment(int align) ----- 设置图标和文本的水平对齐方式
+
+----void setEnable(boolean flag) ----- 启用(或禁用)按钮
+
+----void setVerticalTextPosition(int textPosition) ----- 设置文本相对于图标的的垂直位置
+
+----void setHorizontalTextPosition(int textPosition) ----- 设置文本相对于图标的水平位置
+
+package com.weiai;
+
+import java.awt.Color;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class JFrameDemo {
+	public static void main(String[] args) {
+		JButton jb1 = new JButton();
+		JButton jb2 = new JButton();
+		JFrame jf = new JFrame();
+		jf.setTitle("我的窗口");
+		jf.setBounds(300,300,400,400);
+		JPanel jp = new JPanel();
+		jf.add(jp);
+		jb1.setText("确定");
+		jb2.setText("取消");
+		jp.setBackground(Color.BLUE);
+		jb1.setBackground(Color.LIGHT_GRAY);
+		jb2.setBackground(Color.LIGHT_GRAY);
+		jp.add(jb1);
+		jp.add(jb2);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jf.setVisible(true);
+	}
+}
+------------------------------------------------------------------------------------------
+<2>标签组件-----JLabel(JLabel是一种可以包含文本和图片的非交互组件,其文本可以是单行文本,也可以是HTML文本.只包含文本的简单JLabel,类似于java.awt.Label)Label可以支持不同的允许与禁止的图片
+
+--构造函数
+
+----JLabel() ----- 创建无图像并且标题为空字符串的JLabel
+
+----JLabel(Icon image) ----- 创建具有指定图像的JLabel
+
+----JLabel(String text) ----- 创建具有指定文本的JLabel
+
+----JLabel(String text,Icon image,int horizontalAlignment)----- 创建具有指定文本、图像和水平对齐方式的JLabel(horizontalAlignment的取值有3个:JLabel.LEFT、JLabel.RIGHT、JLabel.CENTER)
+----------------------------------------------
+--常用方法
+
+----void setText(String text) ----- 定义要显示的单行文本
+
+----void setIcon(Icon image) ----- 定义JLabel将要显示的图标
+
+----void setIconTextGap(int iconTextGap) ----- 如果JLabel同时显示图标和文本,此属性定义他们之间的间隔
+
+----void setHorizontalTextPosition(int textPosition) ----- 设置文本相对其图像的水平位置
+
+----void setHorizontalAlignment(int alignment) ----- 设置标签内容沿X轴的对齐方式
+
+----int getText() ----- 返回JLabel所显示的文本字符串
+
+----Icon getIcon() ----- 返回图形图像
+
+----Component getLabelFor() ----- 获得将JLabel添加到的组件
+
+----int getIconTextGap() ----- 返回文本和图像间的间隔量
+
+----int getHorizontalTextPosition() ----- 文本相对其图像的水平位置
+
+----int getHorizontalAlignment() ----- 返回JLabel沿X轴的对齐方式
+
+package com.weiai;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+public class JLabelDemo {
+	public static void main(String[] args) {
+		JFrame jf = new JFrame("java GUI");
+		ImageIcon ii = new ImageIcon("1.jpg");
+		JLabel jl = new JLabel("添加用户",ii,JLabel.CENTER);
+		jf.add(jl);
+		jf.setSize(1000, 1000);
+		jf.setVisible(true);
+	}
+}
+------------------------------------------------------------------------------------
+
+<3>单行文本框组件-----JTextField(该组件实现一个文本框,用来接收用户的单行文本信息)
+
+--构造方法
+
+----JTextField() ----- 创建一个默认的文本框
+
+----JTextField(String text) ----- 创建的同时指定初始化文本信息
+
+----JTextField(int columns) ----- 创建一个指定列数的文本框
+
+----JTextField(String text,int columns)
+
+---------------------------------------------------------------------
+--常用方法
+
+----Dimension getPreferredSize() ----- 获得文本框的首选大小
+
+----void srollRectToVisible(Rectangle r) ----- 向左或向右滚动文本框中的内容
+
+----void setColumns(int columns) ----- 设置自多可显示内容的列数
+
+----void setFont(Font f) ----- 设置字体
+
+----void setScrollOffset(int scrollOffset) ----- 设置滚动偏移量(像素)
+
+----void setHorizontalAlignment(int alignment) ----- 设置水平对齐方式
+------------------------------------------------------------------------------
+package com.weiai;
+import java.awt.Font;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+public class JTextFieldDemo {
+	public static void main(String[] args) {
+		JFrame jf = new JFrame("Java GUI");
+		JPanel jp = new JPanel();
+		JLabel jl = new JLabel("用户名");
+		JTextField jt = new JTextField(15);
+		jt.setFont(new Font("楷体",Font.BOLD,14));
+		jt.setHorizontalAlignment(JTextField.CENTER);
+		jp.add(jl);
+		jp.add(jt);
+		jf.add(jp);
+		jf.setSize(400,400);
+		jf.setVisible(true);
+	}
+}
+--------------------------------------------------------------------------------------
+
+<4>多行文本域组件-----JTextArea(实现一个文本域,用于显示用户输入的多行文本信息)
+
+--构造方法
+
+----JTextArea() ----- 创建一个默认的文本域
+
+----JTextArea(int rows,int columns) ----- 创建一个具有指定行数和列数的文本域
+
+----JTextArea(String text) ----- 创建一个包含指定文本的文本域
+
+----JTextArea(String text,int rows,int columns)
+
+-----------------------------------------------------------
+
+--常用方法
+
+----void append(String str) ----- 追加str到文本域末尾
+
+----void setColumns(int columns) ----- 设置行数
+
+----void setRows(int rows) ----- 设置列数
+
+----int getColumns() ----- 获取行数
+
+----void setLineWrap(boolean wrap) ----- 设置换行策略
+
+----int getRows() ------ 获取列数
+
+----void insert(String str,int position) ----- 在指定位置插入指定字符串
+
+----void replaceRange(String str,int start,intt end) ----- 将指定范围内的内容用指定字符串替换
+
+package com.weiai;
+
+import java.awt.Color;
+import java.awt.Dimension;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+public class JTextAreaDemo {
+
+	public static void main(String[] args) {
+		JFrame jf = new JFrame("Java GUI");
+		JPanel jp = new JPanel();
+		JTextArea jta = new JTextArea("请输入至少100字",6,200);
+		jta.setLineWrap(true);      //设置为自动换行
+		JScrollPane jsp = new JScrollPane(jta);		//将文本域放入滚动窗口
+		Dimension size = jta.getPreferredSize();			//获取文本域的首选大小
+		jsp.setBounds(110,90,size.width,size.height);
+		jp.add(jsp);
+		jf.add(jp);
+		jf.setBackground(Color.LIGHT_GRAY);
+		jf.setSize(400, 200);
+		jf.setVisible(true);
+	}
+
+}
+----------------------------------------------------------------------------------
+
+<5>复选框组件-----JCheckBox
+
+--构造方法
+
+----JCheckBox() ----- 创建一个默认的复选框,默认情况下既未指定文本,也未指图像,未被选定
+
+----JCheckBox(String text) ----- 指定文本
+
+----JCheckBox(String text,boolean selected) ----- 指定文本,选定状态
+--------------------------------------------------------------------------
+package com.weiai;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+public class JCheckBoxDemo {
+	private JPanel jp = new JPanel();
+	private JLabel label = new JLabel("爱好:");
+	private JLabel show = new JLabel("爱好");
+	private JCheckBox jcb1 = new JCheckBox("读书",true);
+	private JCheckBox jcb2 = new JCheckBox("听音乐");
+	private JCheckBox jcb3 = new JCheckBox("踢足球");
+	private JButton jb = new JButton("确定");
+	public JCheckBoxDemo(){
+		JFrame jf = new JFrame();
+		jp.add(label);
+		jp.add(jcb1);
+		jp.add(jcb2);
+		jp.add(jcb3);
+		jp.add(jb);
+		jf.add(jp);
+		jb.addActionListener(new MyActionListener());
+		jf.setBackground(Color.LIGHT_GRAY);
+		jf.setSize(400,100);
+		jf.setVisible(true);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	//监听确定按钮事件
+	class MyActionListener  implements ActionListener{
+		public void actionPerformed(ActionEvent arg0){
+			jp.add(show);
+			show.setText("你的爱好有:");
+			if(jcb1.isSelected()){
+				show.setText(show.getText()+jcb1.getText());
+			}
+			if(jcb2.isSelected()){
+				show.setText(show.getText()+"  "+jcb2.getText());
+			}
+			if(jcb3.isSelected()){
+				show.setText(show.getText()+" "+jcb3.getText());
+			}
+		}
+	}
+	public static void main(String[] args) {
+		new JCheckBoxDemo();
+	}
+}
+---------------------------------------------------------------------
+<6>单选按钮组件-----JRadioButton(与JCheckBox几乎相同,都是从JToggleButton类中派生出来的)
+
+--构造方法
+
+----JRadioButton() ----- 创建一个初始化为未选择、文本未设定的单选按钮
+
+----JRadioButton(Icon icon) ----- 具有指定图像
+
+----JRadioButton(Icon icon,boolean selected)
+
+----JRadioButton(String text)
+
+----JRadioButton(String text,boolean selected)
+
+----JRadioButton(String text,Icon icon)
+
+----JRadioButton(String text,Icon icon,boolean selected)  
+-------------------------------------------------------------------------------
+package com.weiai;
+import javax.swing.ButtonGroup;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+public class JRadioButtonDemo {
+	public static void main(String[] args) {
+		JFrame jf = new JFrame("窗口");
+		JPanel jp = new JPanel();
+		JLabel jl = new JLabel("性别");
+		JRadioButton jrb1 = new JRadioButton("男",true);
+		JRadioButton jrb2 = new JRadioButton("女");
+		ButtonGroup group = new ButtonGroup();
+		group.add(jrb1);
+		group.add(jrb2);
+		jp.add(jl);
+		jp.add(jrb1);
+		jp.add(jrb2);
+		jf.add(jp);
+		jf.setBounds(300,200,400,100);
+		jf.setVisible(true);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+
+}
+-------------------------------------------------------------------------------------
+<7>下拉列表组件-----JComboBox
+
+--构造方法
+
+----JComboBox() ----- 创建一个空的对象
+
+----JComboBox(ComboBoxModel aModel) ----- 创建一个JComboBox,其选项取自现有的ComboBoxModel
+
+----JComboBox(Object[] items) ----- 创建包含指定数组中元素的JComboBox
+
+-----------------------------------------
+--常用方法
+
+----void addItem(Object anObject) ----- 将指定的对象作为选项添加到下拉列表框中
+
+----void insertItemAt(Object anObject,int index) ----- 在指定索引处插入项
+
+----void removeItem(Object anObject) ----- 删除指定的对象项
+
+----void removeItemAt(int anindex)
+
+----void removeAllItems()
+
+----getItemsCount()
+
+----Object getItemAt(int index)
+
+----int getSelectedIndex() ----- 获取当前选择的索引
+
+----Object getSelectedItem() ----- 获取当前选择的项
+
+----------------------------------------------------------
+注:JComboBox能够响应两个事件,分别为ItemEvent和ActionEvent.要处理这两个事件,需要创建相应的类实现ItemListener和ActionListener接口,ItemEvent除法时机是当下拉列表框中的所选项更改时,ActionEvent除法的时机是当用户在JComboBox上直接输入选择项并按Enter键时.
+
+package com.weiai;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+public class JComboBoxDemo {
+	private JPanel panel = new JPanel();
+	private JComboBox cmb = new JComboBox();
+	private JLabel label = new JLabel("要添加的项:");
+	private JLabel showInfo = new JLabel();
+	private JTextField jtf = new JTextField(16);
+	private JButton btn1 = new JButton("添加");
+	private JButton btn2 = new JButton("删除");
+	public JComboBoxDemo(){
+		JFrame frame = new JFrame("Java GUI");
+		cmb.addItem("-----请选择种类------");
+		cmb.addItem("电脑");
+		panel.add(cmb);
+		panel.add(label);
+		panel.add(jtf);
+		panel.add(btn1);
+		panel.add(btn2);
+		frame.add(panel);
+		btn1.addActionListener(new MyActionListener());
+		btn2.addActionListener(new MyActionListener());
+		cmb.addItemListener(new MyItemListener());
+		frame.setBounds(300,200,600,200);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	class MyActionListener implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			String command = e.getActionCommand();
+			if(command.equals("添加")){
+				if(jtf.getText().length()!=0){
+					cmb.addItem(jtf.getText());
+					panel.add(showInfo);
+					showInfo.setText("添加成功,添加项:"+jtf.getText());
+				}else{
+					panel.add(showInfo);
+					showInfo.setText("请输入要添加的项");
+				}
+			}
+			
+			if(command.equals("删除")){
+				if(cmb.getSelectedIndex()!=-1){
+					String strDel = cmb.getSelectedItem().toString();
+					cmb.removeItem(strDel);
+					panel.add(showInfo);
+					showInfo.setText("删除成功,删除项"+strDel);
+				}else{
+					panel.add(showInfo);
+					showInfo.setText("请选择要删除的项");
+				}
+			}
+		}
+	}
+	
+	class MyItemListener implements ItemListener{
+		public void itemStateChanged(ItemEvent e) {
+			String str = e.getItem().toString();
+			panel.add(showInfo);
+			showInfo.setText("您选择了项"+str);
+		}
+	}
+	
+	public static void main(String[] args) {
+		new JComboBoxDemo();
+	}
+}
+------------------------------------------------------------------
+
+4.JTabbwdPane页签面板(选项卡)
+
+--构造方法
+
+----JTabbedPane() ----- 床及挨个具有默认JTabbedPane.TOP选项卡布局的空的JTabbedPane
+
+----JTabbedPane(int tabPlacement) ----- 指定选项卡布局(JTabbedPane.TOP、JTabbedPane.BOTTOM、JTabbedPane.RIGHT、JTabbedPane.LEFT)
+
+----JTabbedPane(int tabPlacement,int tabLayoutPolicy) ----- 指定选项卡布局策略(JTabbedPane.WRAP_TAB_LAYOUT ---- 一排不能容纳所有标签,就放在下一行|JTabbedPane.SCROLL_TAB_LAYOUT ---- 只显示一排图标,多余的通过滚动图标显示) 
+
+--常用方法
+
+----Component add(Component comp,int index) ----- 在指定位置添加一个组件,也可以不指定索引
+
+----Component add(String title,Component comp) ----- 添加具有指定标题的组件
+
+----Component getComponentAt(int index) -----返回指定位置的组件
+
+----int getSelectedIndex() ----- 返回当前选择的此选项卡窗格的索引
+
+----int getTabComponentAt(int index) ----- 返回指定位置上的选项卡组件
+
+----int getTabCount() ----- 返回页签面板上的选项卡数目
+
+----void addTab(Sring title,Component comp) ----- 添加一个由title表示,有图标的组件
+
+----void addTab(Sring title,Icon icon,Component comp) ----- 添加一个由title表示,有图标的组件
+
+----void remove(Component comp)
+
+----void remove(int index)
+
+----void removeAll()
+
+----void removeTabAt(int index)
+
+----void setTabComponentAt(int index,Component comp) ----- 设置显示选项卡标题的组件
+
+----void setTabLayoutPolicy(int tabLayoutPolicy)
+
+----void settabPlacement(int tabPlacement)
+
+----void setBackgroundAt(int index,Color color)
+
+----void setComponentAt(int index,Component comp) ----- 设置index位置的组件为comp
+
+----void setEnabledAt(int index,boolean flag)
+
+----void setTitleAt(int index,String title)
+
+--------------------------------------------------------------
+package com.weiai;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+public class JTabbedPaneDemo {
+	private JTabbedPane jtp = new JTabbedPane(JTabbedPane.TOP);
+	private JTextField showField = new JTextField();
+	public JTabbedPaneDemo(){
+		JFrame jf = new JFrame("Java GUI");
+		jtp.addTab("信息录入", new JPanel());
+		jtp.addTab("信息查看", new JPanel());
+		jtp.addTab("归档处理", new JPanel());
+		jtp.addChangeListener(new MyChangeListener());
+		jf.add(jtp);
+		jf.add(showField,BorderLayout.SOUTH);
+		jf.add(jtp,BorderLayout.CENTER);
+		jf.setBackground(Color.LIGHT_GRAY);
+		jf.setSize(600,200);
+		jf.setVisible(true);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	class MyChangeListener implements ChangeListener{
+
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			String temp = jtp.getTitleAt(jtp.getSelectedIndex());
+			showField.setText("【"+temp+"】"+"被选择");
+		}
+	}
+	public static void main(String[] args) {
+		new JTabbedPaneDemo();
+	}
+}
+---------------------------------------------------------------------
+5.JTable表格
+
+--构造方法
+
+----JTable() ----- 创建一个默认的JTable,使用默认的数据类型,默认的列模型和默认的选择模型对其初始化
+
+----JTable(int numRows,int numColumns) ----- 默认数据类型,并制定行列数目
+
+----JTable(Objec[][]rowData,Object[] columnNames) ----- 创建一个JTable来显示二维数组rowData中的值,columnNames提供列名
+
+package com.weiai;
+import java.awt.Color;
+import java.awt.Dimension;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+
+public class JTableDemo {
+	public static void main(String[] args) {
+		JFrame jf = new JFrame("Java GUI");
+		Object[] columnName = {"名称","单价","购买数量","电话号码","家庭地址"};
+		Object[][] rowData = {
+				{"联想笔记本",4500,5,"12345678901","甘肃"},
+				{"联想笔记本",4500,5,"12345678901","甘肃"},
+				{"联想笔记本",4500,5,"12345678901","甘肃"},
+				{"联想笔记本",4500,5,"12345678901","甘肃"}
+				};
+		JTable jt = new JTable(rowData,columnName);
+		jt.setPreferredScrollableViewportSize(new Dimension(600,100));
+		jt.setRowHeight(30);
+		jt.setRowHeight(0,20);
+		jt.setRowMargin(5);
+		jt.setBackground(new Color(180,225,225));
+		jt.setSelectionBackground(Color.white);
+		jt.setSelectionForeground(Color.red);		//选择行的前景色
+		jt.setShowGrid(true);						//是否显示网格线
+		jt.setShowHorizontalLines(true);			//显示水平网格线
+		jt.setShowVerticalLines(true);				//显示垂直网格线
+		jt.setGridColor(Color.BLACK);				//网格线颜色
+		jt.setRowSelectionAllowed(true);			//设置可否被选择(默认为false)
+		jt.getTableHeader().setResizingAllowed(true); //不可拖动
+		jt.getTableHeader().setReorderingAllowed(true); //不能重新排序各列
+		JScrollPane pane = new JScrollPane(jt);
+		jf.add(pane);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		jf.setBounds(300,200,600,200);
+		jf.setVisible(true);
+	}
+}
+-------------------------------------------------------------------------------
+6.JTree树
+
+--构造方法
+
+----JTree() ----- 创建具有默认树模型的JTree
+
+----JTree(Object[] value) ----- 用指定数组value来创建JTree,数组元素作为不被显示的的新根节点的子节点
+
+----JTree(JTreeModel model) ----- 使用指定树模型来创建树
+
+----JTree(TreeNode root) ----- 创建JTree,指定TreeNode作为根节点
+
+----JTree(TreeNode root,boolean flag) ----- 创建JTree,指定TreeNode作为根节点,它用指定的方式显示根节点,并确定节点是否为页节点
+
+--注:树节点由javax.swing.tree包中的接口TreeNode来定义,该接口被DefaultMutableTreeNode类实现,为了创建一个树,使用DefaultMutableTreeNode类为树创建节点
+
+--DefaultMutableTreeNode类的构造方法
+
+----DefaultMutableTreeNode(Object userObject) ----- 创建没有父节点和子节点,但允许有子节点的树节点,并使用指定的用户对象对它进行初始化
+
+----DefaultMutableTreeNode(Object userObject,boolean allowsChildren) ----- 创建没有父节点和子节点的树节点,使用指定的用户对象对它进行初始化,仅在指定时才允许有子节点
+
+package com.weiai;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Enumeration;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.ExpandVetoException;
+import javax.swing.tree.TreeNode;
+import javax.swing.tree.TreePath;
+
+public class JTreeDemo {
+	static int i = 0;
+	private DefaultMutableTreeNode root;
+	private DefaultMutableTreeNode child;
+	private DefaultMutableTreeNode chosen;
+	private JTree tree;
+	private DefaultTreeModel model;
+	String[][] data = {
+			{"体育","足球","篮球","乒乓球"},
+			{"娱乐","唱歌","跳舞","相声","小品"},
+			{"电视","长虹","海尔","创维"},
+			{"国家","中国","越南","朝鲜","日本"},
+			{"武器","飞机","大炮","坦克"}
+	};
+	public JTreeDemo(){
+		JFrame frame = new JFrame();
+		JPanel jPanel1 = new JPanel();
+		root = new DefaultMutableTreeNode("根");
+		tree = new JTree(root);			//穿甲指定根的树
+		model = (DefaultTreeModel)tree.getModel();
+		for (int i = 0; i < data.length; i++) {
+			child = new Branch(data[i]).node();
+			chosen = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
+			if(chosen==null){
+				chosen = root;
+			}
+			model.insertNodeInto(child, chosen, 0);
+		}
+		JButton jButton1 = new JButton("使节点可编辑");
+		jButton1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				tree.setEditable(true);
+				tree.getCellEditor().addCellEditorListener(
+						new CellEditorAction()); 
+				tree.startEditingAtPath(tree.getSelectionPath());
+				}
+			});
+		expandAll(tree,new TreePath(root),true);		//默认展开节点
+		JScrollPane treePane = new JScrollPane();
+		treePane.setViewportView(tree);			//将JTree添加到JScrollPane中
+		jPanel1.add(treePane);
+		jPanel1.add(jButton1);
+		frame.add(jPanel1);
+		frame.setSize(500,450);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+	
+	//默认展开节点
+	public void expandAll(JTree tree,TreePath parent,boolean expand){
+		TreeNode node = (TreeNode)parent.getLastPathComponent();
+		if(node.getChildCount()>0){
+			for (Enumeration e = node.children();e.hasMoreElements();) {
+				TreeNode n = (TreeNode)e.nextElement();
+				TreePath path = parent.pathByAddingChild(n);
+				expandAll(tree, path, expand);
+			}
+		}
+		if(expand){
+			tree.expandPath(parent);
+		}else{
+			tree.collapsePath(parent);
+		}
+	}
+	class Branch{
+		DefaultMutableTreeNode r;
+		public Branch(String[] data){
+			r = new DefaultMutableTreeNode(data[0]);
+			for (int i = 1; i < data.length; i++) {
+				r.add(new DefaultMutableTreeNode(data[i]));
+			}
+		}
+		public DefaultMutableTreeNode node(){
+			return r;
+		}
+	}
+	private class CellEditorAction implements CellEditorListener{
+
+		@Override
+		public void editingCanceled(ChangeEvent e) {
+			System.out.println("编辑取消");
+			
+		}
+
+		@Override
+		public void editingStopped(ChangeEvent e) {
+			System.out.println("编辑结束");
+		}
+	}
+	
+	public static void main(String[] args) {
+		new JTreeDemo();
+	}
+}
+----------------------------------------------------------------------------
+
+7.JFileChooser文件选择器
+
+--构造方法
+
+----JFileChooser() ----- 创建一个指向用户默认目录的对象
+
+----JFileChooser(File currentDirectory) ----- 使用给定的File作为路径
+
+----JFileChooser(String currentDirectoryPath) ----- 使用给定路径
+
+----JFileChooser(String currentDirectoryPath,FileSystemView fsv)
+
+--常用方法
+
+----int showOpenDialog(Component parent) ----- 弹出一个打开对话框
+
+----int showSaveDialog(Component parent) ----- 弹出一个保存对话框
+
+package com.weiai;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class JFileChooserDemo {
+	private JLabel label = new JLabel("所选文件路径");
+	private JTextField jtf = new JTextField(25);
+	private JButton button = new JButton("浏览");
+	public JFileChooserDemo(){
+		JFrame jf = new JFrame("Java GUI");
+		JPanel panel = new JPanel();
+		panel.add(label);
+		panel.add(jtf);
+		panel.add(button);
+		jf.add(panel);
+		jf.pack();
+		jf.setVisible(true);
+		jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		button.addActionListener(new MyActionListener());
+	}
+	
+	//Action事件
+	class MyActionListener implements ActionListener{
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			JFileChooser fc = new JFileChooser("F:\\");
+			int val = fc.showOpenDialog(null);
+			if(val==JFileChooser.APPROVE_OPTION){
+				jtf.setText(fc.getSelectedFile().toString());
+			}else{
+				jtf.setText("未选择文件");
+			}
+		}
+	}
+	public static void main(String[] args) {
+		new JFileChooserDemo();
+	}
+}
+----------------------------------------------------------------------------------
+8.布局管理器
+
+<1>BorderLayout管理器(边界布局管理器)
+
+--BorderLayout布局管理器包括5个区域:North、South、East、West和Center(常量)
+
+--构造方法
+
+----BorderLayout() ----- 创建一Border组件,组件之间没有间隙
+
+----BorderLayout(int hgap,int vgap) ----- 创建一个Border布局,其中hgap表示组件之间的横向间隔,vgap表示纵向价格(像素)
+
+package com.weiai;
+
+import java.awt.BorderLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+public class BorderLayoutDemo {
+	public static void main(String[] args) {
+		JFrame frame = new JFrame();
+		frame.setSize(400,200);
+		frame.setLayout(new BorderLayout());   //为窗口设计布局
+		JButton button1 = new JButton("头部");
+		JButton button2 = new JButton("左边导航");
+		JButton button3 = new JButton("内容");
+		JButton button4 = new JButton("右边信息");
+		JButton button5 = new JButton("底部版权");
+		frame.add(button1,BorderLayout.NORTH);
+		frame.add(button2,BorderLayout.WEST);
+		frame.add(button3,BorderLayout.CENTER);
+		frame.add(button4,BorderLayout.EAST);
+		frame.add(button5,BorderLayout.SOUTH);
+		frame.setBounds(300,200,600,300);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+}
+----------------------------------------------------------------------
+<2>FlowLayOut管理器(流式布局管理器)
+
+--是JPanel和JApplet的默认布局管理器,组件放置规律是从上到下从左到右
+
+--不限制它所管理的组件的大小,允许他们有自己的最佳大小
+
+--构造方法
+
+----FlowLayout() ----- 创建一个布局管理器,使用默认的居中对齐方式和默认的5个像素的水平和垂直间距
+
+----FlowLayout(int align) ----- 使用默认布局同时使用FlowLayout.常量指定对齐方式
+
+----FlowLayout(nt align,int hgap,int vgap) ----- 指定对齐方式以及纵横间距
+
+package com.weiai;
+
+import java.awt.FlowLayout;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class FlowLayoutDemo {
+	public static void main(String[] args) {
+		JFrame jFrame = new JFrame();
+		JPanel jPanel = new JPanel();
+		JButton button1 = new JButton("1");
+		JButton button2 = new JButton("2");
+		JButton button3 = new JButton("3");
+		JButton button4 = new JButton("4");
+		JButton button5 = new JButton("5");
+		JButton button6 = new JButton("6");
+		JButton button7 = new JButton("7");
+		JButton button8 = new JButton("8");
+		JButton button9 = new JButton("9");
+		JButton button0 = new JButton("0");
+		jPanel.add(button1);
+		jPanel.add(button2);
+		jPanel.add(button3);
+		jPanel.add(button4);
+		jPanel.add(button5);
+		jPanel.add(button6);
+		jPanel.add(button7);
+		jPanel.add(button8);
+		jPanel.add(button9);
+		jPanel.add(button0);
+		jPanel.setLayout(new FlowLayout(FlowLayout.LEADING,10,10));
+		jFrame.add(jPanel);
+		jFrame.setBounds(300,200,300,150);
+		jFrame.setVisible(true);
+		jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+}
+-------------------------------------------------------------------------------
+<3>CardLayout管理器(卡片布局管理器) ----- 帮助用户实现多个成员共享同一个显示空间,并且一次只显示一个容器组件的内容
+
+--CardLayout布局管理器将容器分成许多层,每层的显示空间占据整个容器的大小,但每层只允许放置一个组件
+
+--构造方法
+
+----CardLayout() ----- 构造一个新布局,默认间隔为0
+
+----CardLayout(int hgap,int vgap) ----- 创建布局管理器,并制定纵横间隔
+
+package com.weiai;
+
+import java.awt.FlowLayout;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class FlowLayoutDemo {
+	public static void main(String[] args) {
+		JFrame jFrame = new JFrame();
+		JPanel jPanel = new JPanel();
+		JButton button1 = new JButton("1");
+		JButton button2 = new JButton("2");
+		JButton button3 = new JButton("3");
+		JButton button4 = new JButton("4");
+		JButton button5 = new JButton("5");
+		JButton button6 = new JButton("6");
+		JButton button7 = new JButton("7");
+		JButton button8 = new JButton("8");
+		JButton button9 = new JButton("9");
+		JButton button0 = new JButton("0");
+		jPanel.add(button1);
+		jPanel.add(button2);
+		jPanel.add(button3);
+		jPanel.add(button4);
+		jPanel.add(button5);
+		jPanel.add(button6);
+		jPanel.add(button7);
+		jPanel.add(button8);
+		jPanel.add(button9);
+		jPanel.add(button0);
+		jPanel.setLayout(new FlowLayout(FlowLayout.LEADING,10,10));
+		jFrame.add(jPanel);
+		jFrame.setBounds(300,200,300,150);
+		jFrame.setVisible(true);
+		jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+}
+--------------------------------------------------------------------------------------
+<4>GridLayout管理器(网格布局管理器)
+
+--构造方法
+
+----GridLayout(int rows,int cols) ---- 创建一个指定行和指定列的网格布局,对布局中所有组件的大小一样,组件之间没有间隔
+
+----GridLayout(int rows,int cols,int hgap,int vgap) ----- 创建的同时指定组件之间的纵横间隙
+
+package com.weiai;
+
+import java.awt.GridLayout;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+public class GridLayoutDemo {
+	public static void main(String[] args) {
+		JFrame jFrame = new JFrame("计算器");
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(4,4,5,5));
+		panel.add(new JButton("7"));
+		panel.add(new JButton("8"));
+		panel.add(new JButton("9"));
+		panel.add(new JButton("/"));
+		panel.add(new JButton("4"));
+		panel.add(new JButton("5"));
+		panel.add(new JButton("6"));
+		panel.add(new JButton("*"));
+		panel.add(new JButton("1"));
+		panel.add(new JButton("2"));
+		panel.add(new JButton("3"));
+		panel.add(new JButton("-"));
+		panel.add(new JButton("0"));
+		panel.add(new JButton("."));
+		panel.add(new JButton("="));
+		panel.add(new JButton("+"));
+		jFrame.add(panel);
+		jFrame.setBounds(300,200,200,150);
+		jFrame.setVisible(true);
+		jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+}
+-----------------------------------------------------------------------
+<5>网格包布局管理器 ----- GridBagLayout
+
+--在网格的基础上提供复杂的布局,不需要组件的尺寸一致,允许组件扩展到多行多列,每个GridBagLayout对象都维护了一组动态的、矩形的网格单元,每个组件占有一个或多个单元,所占有的网格单元称为显示区域
+
+--GridBagLayout所管理的诶个组件都与一个GridBagConstraints约束类的对象有关
+
+--GridBagConstraints对象的定制是通过以下变量实现的
+--------------------------------------------
+--gridx和gridy 
+
+----- 用来指定组件左上角在网格中的行和列,容器中最左边列的gridx = 0,最上边行的gridy = 0,这两个变量的默认值是GridBagConstraints.RELATIVE,表示对应的组件将放在前一个组件的右边或下面
+
+--gridwidth和gridheight
+
+----- 用来指定组件显示区域所占的列数和行数,以网格为单位,默认值为1
+
+--fill
+
+-----指定组件填充网格的方式,可以是如下值:GridBagConstraints.NONE(默认值)、GridBagConstraints.VERTICAL(组件纵向充满显示区域,但是不改变组件宽度)、GridBagConstraints.HORIZONTAL(组件横向充满显示区域,不改变组件的高度)、GridBagConstraints.BOTH(组件横向纵向充满其显示区域)
+
+--ipadx和ipady
+
+-----指定组件显示区域的内部填充,即在组件最贱最小尺寸之外需要附加的像素数,默认值为0
+
+--insets
+
+-----指定组件显示区域的外部填充,即组件与其显示区域边缘之间的空间,默认组价按没哟外部填充
+
+--anchor
+
+-----指定组件在显示区域中的位置,可选有:GridBagConstraints.CENTER(默认值,其余为8个方向)
+
+--weightx和weighty
+
+-----用来指定在容器大小改变时,增加或减少的空间如何在组件分配,默认值为0,即所有的组件将聚拢在容器的中心,多余空间将放在容器边缘与网格之间,weightx和weighty的取值一般在0.0~10之间,数值大表明组件所在的哈格或者列获得更多的空间
+
+
+package com.weiai;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JTextField;
+
+public class GridBagLayoutDemo {
+	public static void makeButton(String title,JFrame frame,
+			GridBagLayout gridBagLayout,
+			GridBagConstraints constraints){
+		JButton button  = new JButton(title);
+		gridBagLayout.setConstraints(button, constraints);
+		frame.add(button);
+	}
+	public static void main(String[] args) {
+		JFrame frame = new JFrame("计算器");
+		GridBagLayout gbaglayout = new GridBagLayout();
+		GridBagConstraints constraints = new GridBagConstraints();
+		frame.setLayout(gbaglayout);
+		constraints.fill = GridBagConstraints.BOTH;		//组件充满显示区域
+		constraints.weightx = 0.0;			//恢复默认值
+		constraints.gridwidth = GridBagConstraints.REMAINDER;		//结束
+		JTextField tf = new JTextField("0.0");
+		gbaglayout.setConstraints(tf, constraints);
+		frame.add(tf);
+		constraints.weightx = 0.5;
+		constraints.weighty = 0.2;			//指明组件的分配区域
+		constraints.gridwidth = 1;
+		makeButton("7", frame, gbaglayout, constraints);
+		makeButton("8", frame, gbaglayout, constraints);
+		makeButton("9", frame, gbaglayout, constraints);
+		constraints.gridwidth = GridBagConstraints.REMAINDER;   //结束行
+		
+		makeButton("/", frame, gbaglayout, constraints);
+		
+		constraints.gridwidth = 1;
+		makeButton("4", frame, gbaglayout, constraints);
+		makeButton("5", frame, gbaglayout, constraints);
+		makeButton("6", frame, gbaglayout, constraints);
+		constraints.gridwidth = GridBagConstraints.REMAINDER;   //结束行
+		
+		makeButton("*", frame, gbaglayout, constraints);
+		
+		constraints.gridwidth = 1;
+		makeButton("1", frame, gbaglayout, constraints);
+		makeButton("2", frame, gbaglayout, constraints);
+		makeButton("3", frame, gbaglayout, constraints);
+		constraints.gridwidth = GridBagConstraints.REMAINDER;   //结束行
+		
+		makeButton("-", frame, gbaglayout, constraints);
+		
+		constraints.gridwidth = 1;
+		makeButton("0", frame, gbaglayout, constraints);
+		makeButton(".", frame, gbaglayout, constraints);
+		makeButton("=", frame, gbaglayout, constraints);
+		constraints.gridwidth = GridBagConstraints.REMAINDER;   //结束行
+		
+		makeButton("+", frame, gbaglayout, constraints);
+		constraints.gridwidth = 1;
+		frame.setBounds(300,200,300,200);
+		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+}
+------------------------------------------------------------------------------
+
+<6>BoxLayout管理器和Box容器
+
+--BoxLayout布局管理器通常和Box容器联合使用,Box类有以下两个静态方法
+
+--createHorizotalBox() ----- 返回一个Box对象,它采用水平BoxLayout,即BoxLayout沿着水平方向放置组件,让组价在容器内从左到右排列
+
+--createVericalBox ----- 词用垂直BoxLayout,沿着垂直方向放置组件,让组件在容器内从上到下排列
+
+--Box类中决定组件间隔的静态方法
+
+----static Component createHorizontalGlue() ---- 创建一个不可见的,可以被水平拉伸和收缩的组件
+
+----static Component createVerticalGlue() ---- 创建一个不可见的,可以被垂直拉伸和收缩的组件
+
+----static Component createHorizontalStrut(int width) ---- 创建一个不可见的,固定宽度的组件
+
+----static Component createVerticalStrut(int height) ---- 创建一个不可见的,固定高度的组件
+
+----static Component createRigidArea(Dimension d) ---- 创建一个不可见的,总是具有指定大小的组件
+
+--构造方法
+
+----BoxLayout(Container c,int axis) ----- Container--容器对象,指定该布局管理器在哪个容器中使用,第二个参数用来决定容器上的组件水平(X_AXIS)或垂直(Y_AXIS)放置,可以使用类名来访问这两个属性
+
+package com.weiai;
+
+import java.awt.Dimension;
+
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+
+public class BoxLayoutDemo {
+	public static void main(String[] args) {
+		JFrame frame = new JFrame();
+		//定义按钮数组并初始化
+		JButton[] jbArray = {new JButton("按钮1"),new JButton("按钮2"),
+				new JButton("按钮3"),new JButton("按钮4")};
+		Box b1 = Box.createHorizontalBox();			//创建横向Box容器
+		Box b2 = Box.createVerticalBox();			//创建纵向容器
+		frame.add(b1);								//将外层横向Box添加进窗体
+		b1.add(Box.createVerticalStrut(200));		//添加高度为200的垂直支架
+		b1.add(jbArray[0]);
+		b1.add(Box.createHorizontalStrut(40));		//添加长度为40的水平支架
+		b1.add(jbArray[1]);
+		b1.add(Box.createHorizontalGlue());			//添加水平胶水
+		b1.add(b2);									//添加嵌套的纵向Box容器
+		//添加宽度为100,高度为20的固定区域
+		b2.add(Box.createRigidArea(new Dimension(100,20)));
+		b2.add(jbArray[2]);
+		b2.add(Box.createVerticalGlue()); 			//添加垂直胶水
+		b2.add(jbArray[3]);
+		b2.add(Box.createVerticalStrut(40));		//添加长度为40的垂直支架
+		//设置窗体的关闭动作、标题、大小位置、以及可见性
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setTitle("箱式布局示例");
+		frame.setBounds(100,100,400,200);
+		frame.setVisible(true);
+	}
+}
+---------------------------------------------------------------------------
+
+9.对话框
+
+<1>消息对话框
+
+--public static void showMessageDialog(Component parentComponent,Object message,String title,int messageType,Icon icon)
+
+--parentComponent和message是必须指定的
+
+--parentComponent可以是任意组件或者为空,message用来定义提示信息,它是一个对象(通常使用字符串表示),title设置对话框标题
+
+--messageType可选值
+
+---- 0或JOptionPane.ERROR_MESSAGE
+
+---- 1或JOptionPane.INFORMATION_MESSAGE
+
+---- JOptionPane.PLAIN_MESSAGE
+
+---- 2或JOptionPane.WARNING_MESSAGE
+
+---- 3或JOptionPane.QUESTION_MESSAGE
+-----------------------------------------------------------------
+--默认情况下,messageType的值是JOptionPane.INFORMATION_MESSAGE.除了类型PLAIN_MESSAGE外,每种类型都有自己的图标,额可以通过icon参数提供自己的图标
+
+package com.weiai;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+public class JOptionPaneDemo {
+	public static void main(String[] args) {
+		JOptionPane.showMessageDialog(new JFrame(),"用户名或密码错误","错误",0);
+		JOptionPane.showMessageDialog(new JFrame(),"请注册或登录","提示",1);
+		JOptionPane.showMessageDialog(new JFrame(),"普通会员无权执行删除操作","警告",2);
+		JOptionPane.showMessageDialog(new JFrame(),"你是谁","问题",3);
+		JOptionPane.showMessageDialog(new JFrame(),"扫描完毕","提示",JOptionPane.PLAIN_MESSAGE);
+		
+	}
+}
+-----------------------------------------------------------------------------------
+
+<2>确认对话框
+
+public static showConfirmDialog(Component parentCopnonent,Object messageString title,int optionType,int messageType,Icon icon)
+
+--title默认的morning值是"选择一个选项",mesageType的默认值是QUESTION_MESSAGE
+
+--OptionType控制在对话框值上显示的按钮,可选值
+
+----0或JOptionPane.YES_NO_OPTIION
+
+----1或JOptionPane.YES_NO_CANCEL_OPTIION
+
+----2或JOptionPane.OK_CANCEL_OPTIION
+-------------------------------------------------------------------
+----showConfirmDialog()方法所选选项对应的值,这些值可以是整数或常量
+
+--0或JOptionPane.YES_OPTIION
+
+--1或JOptionPane.NO_OPTIION
+
+--2或JOptionPane.CANCEL_OPTIION
+
+--0或JOptionPane.OK_OPTIION
+
+---1或JOptionPane.CLOSED_OPTIION
+
+package com.weiai;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+public class JOptionPaneDemo1 {
+	public static void main(String[] args) {
+		JOptionPane.showConfirmDialog(new JFrame(),"确定要删除吗","删除提示",0);
+		JOptionPane.showConfirmDialog(new JFrame(),"确定要删除吗","删除提示",1,2);
+		JOptionPane.showConfirmDialog(new JFrame(),"确定要删除吗","删除提示",0);
+		JOptionPane.showConfirmDialog(new JFrame(),"确定要删除吗","删除提示",2,1);
+	}
+}
+-------------------------------------------------------------------
+<3>输入对话框
+
+--public static String showInputDialog(Component parentComponent,Object message,String title,int mesageType) ----- 用于文本框输入
+
+--public static Object showInputDialog(Component parentComponent,Object message,String title,int messageType,Icon icon,Object[] selectionValue,Object intValue) ----- 下拉列表或列表框的显示方式(可选值小于20--下拉列表,大于20--列表框)
+
+--参数parentComponent是必须的,message默认为空,title默认值为"输入",messageType默认值为3或JOptionPane.QUESTION_MESSAGE
+
+--showInputDialog()方法中没有optionType参数,电视输入对话框的按钮时不可设置的,通常显示确定和取消
+
+package com.weiai;
+
+import java.awt.Panel;
+
+import javax.swing.JOptionPane;
+
+public class ShowInputDialogDemo {
+	public static void main(String[] args) {
+		JOptionPane.showInputDialog(new Panel(),"请输入用户名","输入用户名",1);
+		String[] str = {"admin","szh","192608","admin123"};
+		JOptionPane.showInputDialog(new Panel(),"请输入用户名","输入用户名",1,null,str,str[0]);
+	}
+}
+----------------------------------------------------------------------------------
+<4>选项对话框(允许用户自己定制按钮内容)
+
+--public static int showInputDialog(Component parentComponent,Object message,String title,int optionType,int messageType,Icon icon,Object[] options,Object initValue)
+
+--option参数指定按钮,initValue参数用于指定默认获得焦点的按钮,该方法返回表明激活的按钮的一个整数值
+
+package com.weiai;
+
+import java.awt.Panel;
+
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+
+public class ShowOptionDialogDemo {
+	public static void main(String[] args) {
+		JButton[] bs = {new JButton("确定"),new JButton("取消"),new JButton("重置")};
+		JOptionPane.showOptionDialog(new Panel(), "请选择其中的一项","选择", 1, 3, null, bs, bs[0]);
+	}
+}
+--------------------------------------------------------------------------------------
+---计算器
+
+package com.weiai;
+
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class Calculator extends JFrame{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	JTextField jtf = new JTextField();
+	JPanel panel = new JPanel();
+	int select = 0;
+	String command = "";
+	double temp = 0.0;
+	double number;
+	public Calculator(){
+		this.setTitle("计算器");
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Container con = getContentPane();
+		con.add(jtf, BorderLayout.NORTH);
+		con.add(panel,BorderLayout.CENTER);
+		panel.setLayout(new GridLayout(4,4,10,10));				//网格布局(4行4列,纵横间隔10)
+		con.add(panel);
+		jtf.setHorizontalAlignment(JTextField.RIGHT);			//文本靠右
+		ActionListener nums = new CalculatorAction1();
+		ActionListener opin = new CalculatorAction2();
+		
+		//调用addButto()方法添加按钮组件,并添加相应的事件处理机制
+		addButton("1",nums);		
+		addButton("2",nums);		
+		addButton("3",nums);		
+		addButton("+",opin);		
+		addButton("4",nums);		
+		addButton("5",nums);		
+		addButton("6",nums);		
+		addButton("-",opin);		
+		addButton("7",nums);		
+		addButton("8",nums);		
+		addButton("9",nums);		
+		addButton("*",opin);		
+		addButton("0",nums);		
+		addButton(".",opin);		
+		addButton("=",opin);		
+		addButton("/",opin);	
+	}
+	private void addButton(String str,ActionListener list){
+		JButton button = new JButton(str);
+		if(str.equals(".")){//设置文本为"."的按钮不可用
+			button.setEnabled(false);
+		}
+		button.addActionListener(list);		//向按钮添加事件
+		panel.add(button);					//将按钮添加到JPanel
+	}
+	
+	//创建CalculatorAction1内部类,该类实现ActionListener接口
+	class CalculatorAction1 implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String input = e.getActionCommand();
+			System.out.println(input);
+			jtf.setText(jtf.getText()+input); 		//在文本框中显示用户的单击的按钮文本内容
+		}
+	}
+	
+	//创建内部类CalculatorAction2,完成两个数值的加减乘除操作
+	class CalculatorAction2 implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String command = e.getActionCommand();
+			if("+".equals(command)){
+				temp = Double.parseDouble(jtf.getText());
+				jtf.setText("");
+				select = 1;
+			}
+			if("-".equals(command)){
+				temp = Double.parseDouble(jtf.getText());
+				jtf.setText("");
+				select = 2;
+			}
+			if("*".equals(command)){
+				temp = Double.parseDouble(jtf.getText());
+				jtf.setText("");
+				select = 3;
+			}
+			if("/".equals(command)){
+				temp = Double.parseDouble(jtf.getText());
+				jtf.setText("");
+				select = 4;
+			}
+			if("=".equals(command)){
+				if(1 == select){
+					number = Double.parseDouble(jtf.getText());
+					jtf.setText((number = temp + number) + "");
+				}else if(2 == select){
+					number = Double.parseDouble(jtf.getText());
+					jtf.setText((number = temp - number) + "");
+				}else if(3 == select){
+					number = Double.parseDouble(jtf.getText());
+					jtf.setText((number = temp * number) + "");
+				}else if(4 == select){
+					number = Double.parseDouble(jtf.getText());
+					if(0 == number){
+						JOptionPane.showMessageDialog(panel, "除数不能为0");
+					}else{
+						jtf.setText((number = temp / number) + "");
+					}
+				}
+			}
+		}	
+	}
+}
+
+-----
+package com.weiai;
+
+import javax.swing.JFrame;
+
+public class CalculatorTest {
+	public static void main(String[] args) {
+		Calculator mainFrame = new Calculator();
+		mainFrame.setBounds(300,200,260,200);
+		mainFrame.setTitle("计算器");
+		mainFrame.setVisible(true);
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	}
+}
+
+二十五、JDBC数据库编程
+
+1.JDBC的工作机制
+
+<1>JDBC对数据库的访问包括以下几个主要组件:
+
+--java应用程序 ----- JDK中的java.sql和javax.sql包中的JDBC API来编写程序
+
+--JDBC API ----- 提供各种标准接口
+
+--JDBC Driver Manager ----- 管理各种不同的JDBC驱动
+
+--JDBC驱动 ----- 提供的JBDC驱动实现了JDBC API中定义的各种接口
+
+--数据源 ----- 各个类型的数据库
+
+<2>JDBC　API结构
+
+--java.sql ----- 包含了JDBC API的核心java数据对象,包括DBMS连接,以及存储在DBMS里的数据进行交互而提供的java数据对象
+
+--javax.sql ----- 扩展了java.sql,是javaEE的一部分,除其他高级JDBC特性外，还包含了那些与JNDI(java命名与目录接口)进行交互的java数据对象,以及管理连接池的java数据对象
+
+--在java.sql包中,常用的JDBC接口或类主要包括4个:Connection接口,DriverManager类,Statement类和ResultSet接口.java.sql中还包括PreparedStatement接口,CallableStatement接口,这两个接口比较复杂.
+
+<3>JDBC驱动(较为常用的驱动方式--JDBC-ODBC桥接 --纯java驱动)
+
+--纯java驱动程序 ----- 不同的数据库需要下载专用的JDBC驱动(.jar文件引入工程)
+
+	--首先引入mysqlJDBC驱动包
+	try{
+		Class.forName("com.mysql.jdbc.Driver");
+		String url = "jdbc:mysql://localhost:3306/javatest";		//数据库名为 Javatest
+		String user = "root";
+		String password = "root";
+		Connection conn = DriverManager.getConnection(url,user,password);
+	}catch(ClassNotFoundException e){
+		e.printStackTrace();
+	}catch(SQLException e){
+		e.printStackTrace();
+	}
+
+--JDBC-ODBC桥连(将对API的调用转换为对另一组数据库连接(ODBC)的API的调用)
+
+----jDK中已经包括了JDBC-ODBC桥连的驱动接口,不需要下载额外的JDBC驱动程序,只需要配置数据源即可.JDBC-ODBC桥的实现类(sun.jdbc.odbc.JdbcOdbcDriver),数据库连接字符串将以"jdbc:odbc:"开始,后面跟随数据源名字.
+
+	try{
+		Class.forName("sun.jdbc.odbc.JdbcOdbcDriver");
+		Connection conn = DriverManager.getConnection("jdbc;odbc:javatest","root","root");
+		}catch(ClassNotFoundException e){
+			e.printStackTrace();
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+
+2.JDBC连接数据库的基本步骤
+
+<1>配置环境
+
+--以记事本开发,配置环境变量
+
+--IDE开发,加载jar驱动包(Properties--->javaBuildPath --->Libraries--->Add Extends JARSs)
+
+<2>连接数据库
+
+--把JDBC驱动类装入java虚拟机,使用Class.forName()方法,此方法将给定的类加载到java虚拟机中,如果系统中不存在给定的类则抛出ClassNotFoundException异常
+
+Class.forName("com.mysql.jdbc.Driver") ----- 引号中的为连接mysql数据库的驱动名称,Class是一个位于java.lang包中的类,通过该类的静态方法forName()加载驱动程序
+
+--加载驱动,并与数据库建立连接.Driermanager类跟踪已注册的驱动程序,当调用getConnection()方法时,它会搜索整个驱动程序列表,直到找到一个能够连接至数据连接字符串中指定的数据库的驱动程序,加载驱动程序之后,将使用DriverManager类的getConnection()方法建立于数据库的连接,接收的3个参数(url,用户名,密码)后来两个参数是可选的
+
+--释放资源,关闭连接
+
+conn.close()
+------------------------------------
+package com;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Connection;
+public class DatabaseDemo1 {
+	public static void main(String[] args) {
+		Connection conn = null;
+		try {
+			Class.forName("com.mysql.jdbc.Driver");			//加载mysql驱动
+			String url = "jdbc:mysql://localhost:3306/javatest";
+			conn = DriverManager.getConnection(url,"root","root");
+			System.out.println("数据库连接成功");
+		} catch (ClassNotFoundException | SQLException e) {
+			System.out.println("连接数据库失败");
+		}finally{
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}	
+	}
+}
+--------------------------------------------------
+3.JDBC主要的类和接口
+
+<1>Connection接口
+
+--代表与特定的数据库的连接,连接过程包括所执行的SQL语句和在该连接上所返回的结果
+
+--一个应用程序可与单个数据库有一个或多个连接,或者可与许多数据库有连接.
+
+--常用方法
+
+----createStatement() ----- 创建并返回一个Statement对象,通常在执行无参的SQL语句时创建该实例
+
+----createStatement(int resultSetType,int resultSetConcurrency) ----- 创建一个Statement对象,该对象将生成具有给定类型和并发性的ResultSet对象
+
+----prepareStatement() ----- 创建并返回一个PreparedStatement对象,通常在执行包含参数的SQL语句是创建该实例,并对SQL语句进行了预编译处理
+
+----isReadOnly() ----- 查询此Connection对象是佛处于只读模式
+
+----setReadOnly(boolean) ----- 设置当前Connection对象的读取模式,默认为非只读
+
+----commit() ----- 使用上一次提提交/回滚后进行的更改成为持久更改,并且释放此Connection对象当前持有的所有数据库锁
+
+----close() ----- 立即释放此Connection对象的数据库和JDBC资源,而不是等待他们被自动释放
+
+----rollback() ----- 取消在当前事务中进行的所有更改,并释放此Connection对象当前所持有的所有数据库锁
+---------------------------------------------------------------------------
+<2>DriverManager类
+
+--该类用于管理数据库中的所有驱动程序,是JDBC的管理层,作用于用户和驱动程序之间,用于跟踪可用的驱动程序,并在数据库和响应的驱动程序之间建立连接.
+
+--常用方法
+
+----getConnection(String url) ----- 试图建立到盖顶数据库url的连接,在该url中包含用户名和密码
+
+----getConnetion(String url,String user,String password) ----- 用于获取数据库连接
+
+----setLoginTimeout(int seconds) ----- 设置每次等待建立数据库离连接的最长时间
+
+----println(String message) ----- 将一条消息打印到当前JDBC数据流中
+
+--例
+
+	String url = "jdbc:mysql://localhost:3306/javatest";
+	Connection conn = DriverManager.getConnection(url,"root","root");
+
+	--------
+	String url = "jdbc:mysql://localhost:3306/javatest? user=root&password=root";
+	Connection conn = DriverManager.getConnection(url);
+------------------------------------------------------------------------------------
+<3>Statement接口
+
+--主要用于对数据库中的数据表进行操作,该接口可执行静态的SQL语句,并返回执行结果
+
+--INSERT、UPDATE和DELETE语句,调用executeUpdate(String sql)方法,SELECT语句则调用executeQuery(String sql)方法,并返回一个永远不能为null的ResultSet实例
+
+--常用方法
+
+----execute(String sql) ----- 执行给定的SQL语句,该语句可能返回多个结果
+
+----executeQuery(String sql) ----- 执行给定的SQL语句,该语句返回单个ResultSet对象
+
+----executeUpdate(String sql) ----- 执行给定的SQL语句,该语句可能为INSERT、UPDATE或DELETE语句,或者不返回任何内容的SQL语句(如SQL DDL语句)
+
+----addBatch(String sql) ----- 将给定的SQL命令添加到此Statement对象的当前命令列表中
+
+----executeBatch() ----- 将一批命令提交给数据库来执行,如果全部命令执行成功,则返回更新计数组成的数组
+
+----close() ----- 立即释放此Statement对象的数据库和JDBC资源
+
+package com;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.Statement;
+
+public class StatementDemo {
+	public static void main(String[] args) {
+		Connection connection = null;
+		Statement statement = null;
+		String insertSql = "INSERT INTO java VALUES(1,'admin','admin','尚振鸿','男',19)";
+		String updateSql = "UPDATE java SET realname = '吴振宇'WHERE id = 1";
+		
+ 		try {
+ 			Class.forName("com.mysql.jdbc.Driver");		//加载mysql驱动
+			String url = "jdbc:mysql://localhost:3306/javatest?useUnicode=true&characterEncoding=utf8";
+			String user = "root";
+			String password = "root";
+			connection =  DriverManager.getConnection(url,user,password);	//创建连接
+			statement = connection.createStatement();	//创建Statement对象
+			int num = statement.executeUpdate(insertSql);
+			if(num>0){
+				int updateNum = statement.executeUpdate(updateSql);
+				if(updateNum>0){
+					System.out.println("向表中添加并修改了一条数据");
+				}else{
+					System.out.println("修改失败");
+				}
+			}else{
+				System.out.println("添加失败");
+			}
+		}catch(ClassNotFoundException e1){
+			System.out.println("无法找到驱动类");
+		}
+ 		catch (SQLException e2) {
+			System.out.println("执行SQL语句出错");
+			e2.printStackTrace();
+		}catch(Exception e3){
+			System.out.println(e3.getMessage());
+		}finally{
+			try {
+				if(connection!=null&&(!connection.isClosed())){
+					connection.close();
+				}
+				if(statement!=null){
+					statement.close();
+					statement = null;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+}
+----------------------------------------------------------------------------------------
+
+<4>PreparedStatement接口
+
+--继承并扩展了Statement接口,用来执行动态的SQL语句,既包含参数的SQL语句,通过PreparedStatement实例执行的动态SQL语句,将被预编译并保存到PreparedStatement实例中,从而可以反复并高效地执行该SQL语句
+
+--常用方法
+
+----execute() ----- 在此PreparedStatement对象中执行SQL语句,该语句可以是任何种类的SQL语句
+
+----executeQuery() ----- 在此PreparedStatement对象中执行SQL查询,并返回该查询返回的ResultSet对象
+
+----executeUpdate() ----- 执行前面包含参数的动态INSERT、UPDATE、DELETE语句,并返回一个int类型的数值,为同步更新记录的条数
+
+----setInt(int parameterIndex,int x) ----- 将指定位置的参数设置为int值
+
+----setString(int parameterIndex,String x)
+
+----setDate(int parameterIndex,Date x) ----- 使用运行应用程序的虚拟机的默认时区,将指定位置的参数设置为java.sql.Date值
+
+----setNull(int parameterIndex,int sqlType) ----- 将指定未知的参数设置为SQL NULL
+
+----clearParameters() ----- 立即清除当前参数值
+-----------------------------------------------------------------------------
+
+--注:有许多的setXXX()方法和setXxx方法,setObject()可以为各种类型的参数赋值
+
+例:
+
+String sql = "INSERT INTO java VALUES(?,?,?)";
+PreparedStatement pst = conn.PreparedStatement(sql);
+pst.setInt(1,2);
+pst.setString(2,"admin");
+pst.setString(3,"admin");
+pst.executeUpdate();
+
+--先创建字符串变量sql,在sql字符串中所有出现字段值的地方都用占位符"?"代替,然后使用Connection对象的PreparedStatemet对象pst,对带有占位符的sql进行预编译,接着根据参数类型调用相应的setXXX()方法设置相应类型的值(-----索引从1开始),然后使用executeUpdate()方法更新数据库中的数据
+
+package com;
+
+import java.util.Scanner;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+public class PreparedStatementDemo {
+	public static void main(String[] args) {
+		Scanner input = new Scanner(System.in);
+		Connection conn = null;
+		PreparedStatement pStatement = null;
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+			String user = "root";
+			String password = "root";
+			conn = DriverManager.getConnection("jdbc:mysql://localhost/javatest?useUnicode=true&characterEncoding=utf8",user,password);
+			System.out.println("请输入你的编号");
+			int num = input.nextInt();
+			System.out.println("请输入新密码");
+			String pwd = input.next();
+			input.close();
+			String updateSql = "UPDATE java SET password = ? where id = ?";			//定义更新的sql语句
+			pStatement = conn.prepareStatement(updateSql);			//获取PreparedStatement对象
+			pStatement.setString(1, pwd);
+			pStatement.setInt(2, num);
+			int row = pStatement.executeUpdate();
+			if(row>0){
+				System.out.println("密码修改成功");
+			}else{
+				System.out.println("密码修改失败");
+			}
+		} catch (ClassNotFoundException e1) {
+			System.out.println("无法找到驱动类");
+			e1.printStackTrace();
+		} catch (SQLException e2) {
+			System.out.println("SQL语句执行错误");
+			e2.printStackTrace();
+		}catch(Exception e3){
+			System.out.println(e3.getMessage());
+		}finally{
+			try {
+				if(conn != null&&(!conn.isClosed())){
+					conn.close();
+				}
+				if(pStatement!=null){
+					pStatement.close();
+					pStatement = null;
+				}
+			} catch (Exception e4) {
+				e4.printStackTrace();
+			}
+		}
+	}
+}
+--------------------------------------------------------------------------------
+<5>ResultSet接口
+
+--ResultSet接口类似于一个数据表,通过该接口的实例可以获得检索结果集,以及对应的数据表的相关信息
+
+--常用方法
+
+----absolute(int row) ----- 将光标移动到此ResultSet对象的给定行编号
+
+----first() ----- 将光标移动到此ResultSet对象的第一行
+
+----next() ----- 将光标从当前位置向下移一行
+
+----last() ----- 最后一行
+
+----isFirst() ----- 判断是否是第一行
+
+----isLast() ----- 判断是否是最后一行
+
+----beforeFirst() ----- 将光标移动到此ResultSet对象的开头,正好位于第一行开头,如果结果集中不包含任何行,此方法无效
+
+----afterLast() ----- 将光标移动到此ResultSet对象的末尾,正好位于最后一行之后,如果结果集中不包含任何行,则此方法无效
+
+----getRow() ----- 获取当前行的编号,第一行为1,以此类推
+
+----previous() ----- 将光标移动到此ResultSet对象的上一行
+
+----findColumn(String columnLabel) ----- 将给定的ResultSet列标签映射到其ResultSet列索引
+
+package com;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class ResultSetDemo {
+	public static void main(String[] args) {
+		Connection conn = null;			//声明连接
+		PreparedStatement pStatement = null;		//声明PreparedStatement对象
+		ResultSet rs = null;			//声明ResultSet对象
+		try {
+			Class.forName("com.mysql.jdbc.Driver");			//加载mysql驱动
+			String user = "root";
+			String password = "root";
+			conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/javatest?useUnicode=true"
+					+ "&characterEncoding=utf8",user,password);			//创建连接
+			String selectSql = "SELECT * FROM java";
+			pStatement = conn.prepareStatement(selectSql);				//获取PreparedStatement对象
+			rs = pStatement.executeQuery();					//查询结果,返回结果集
+			System.out.println("********************用户列表**************************");
+			System.out.println();
+			System.out.println("|\t编号\t|\t用户名\t\t|\t密码\t\t|\t真实姓名\t\t|\t性别\t|\t年龄\t");
+			while(rs.next()){
+				int id = rs.getInt("id");
+				String username = rs.getString("username");
+				String pwd = rs.getString("password");
+				String realname = rs.getString("realname");
+				String sex = rs.getString("sex");
+				int age = rs.getInt("age");
+				System.out.println("|\t"+id+"\t|\t"+username+"\t\t|\t"+pwd+"\t|\t"+realname+"\t\t|\t"+sex+"\t|\t"+age+"\t");				
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+				try {
+					if(rs!=null){
+					rs.close();
+					rs = null;
+					}
+					if(pStatement!=null){
+						pStatement.close();
+						pStatement = null;
+					}
+					if(conn!=null&(!conn.isClosed())){
+						conn.close();
+					}
+				} catch (SQLException e) {
+
+					e.printStackTrace();
+				}
+			}
+	}
+}
+-------------------------------------------------------------------------------------
+
+二十六、设计模式
+
+1.单例模式 ---- 保证只有一个对象
+
+<1>饿汉模式
+
+class A{
+	//1.构造方法私有化
+	private A(){
+
+	}
+
+	//2.在类内部实例化一个对象,且将其静态化
+	private static  a = new A();
+
+	//3.定义静态的公开的方法将唯一的对象返回出去
+	public static A getObj(){
+		return a;
+	}
+}
+
+//调用
+public class B{
+	public static void main(String[] args){
+		A a = A.getObj();
+		A b = A.getObj();
+		if(a == b){
+			System.out.println("==");
+		}else{
+			System.out.println("!=");
+		}
+	}
+}
+
+-----------------------------------------------------------
+<2>懒汉模式
+
+class A{
+	//1.构造方法私有化
+	private A(){
+
+	}
+
+	//2.在类内部实例化一个对象,且将其静态化
+	private static  a;
+
+	//3.定义静态的公开的方法将唯一的对象返回出去
+	public static A getObj(){
+		if(a == null){
+			a = new A();	
+		}
+		return a;
+	}
+}
+
+//调用
+public class B{
+	public static void main(String[] args){
+		A a = A.getObj();
+		A b = A.getObj();
+		if(a == b){
+			System.out.println("==");
+		}else{
+			System.out.println("!=");
+		}
+	}
+}
+
+注:懒汉模式和饿汉模式的区别
+
+--饿汉模式在类加载时较慢,在调用对象时较快,是线程安全的
+
+--懒汉模式在类加载时较快,在调用对象时较慢,是线程不安全的
